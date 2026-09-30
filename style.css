@@ -24,7 +24,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
         --fundo: #10141d;
         --cartao: #181e2a;
         --texto: #e9ebf1;
@@ -37,6 +37,42 @@
 
         --sombra: 0 2px 6px rgb(0 0 0 / 0.5);
 
-        color-scheme: dark; /* inputs e scrollbars também ficam escuros */
+        color-scheme: dark;
     }
+}
+
+:root[data-theme="dark"] {
+    --fundo: #10141d;
+    --cartao: #181e2a;
+    --texto: #e9ebf1;
+    --suave: #a2a9ba;
+    --linha: #2b3344;
+    --azul: #93aaf0;
+    --dourado: #e2b44f;
+    --erro: #ff8a80;
+    --erro-fundo: #3a1c1a;
+    --sombra: 0 2px 6px rgb(0 0 0 / 0.5);
+    color-scheme: dark;
+}
+
+body {
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: var(--letra-texto);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--espaco);
+}
+
+.botao-tema {
+    padding: var(--espaco-pequeno) var(--espaco);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-redondo);
+    background: var(--cartao);
+    color: var(--texto);
+    cursor: pointer;
 }
