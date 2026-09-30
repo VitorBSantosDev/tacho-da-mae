@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tacho da Mãe</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+<header>
+    <h1>O Tacho da Mãe</h1>
+    <p>Receitas tradicionais portuguesas. Pesquise, filtre e guarde as suas favoritas.</p>
+  </header>
+
+  <main>
+    <section class="filtros" aria-label="Pesquisa e filtros">
+      <div class="campo campo-pesquisa">
+        <label for="pesquisa">Pesquisar</label>
+        <input id="pesquisa" type="search" placeholder="Ex.: bacalhau" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="categoria">Categoria</label>
+        <select id="categoria">
+          <option>Todas</option>
+          <option>Sopas</option>
+          <option>Peixe</option>
+          <option>Carne</option>
+          <option>Doces</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="ordem">Ordenar</label>
+        <select id="ordem">
+          <option value="nome">Nome (A–Z)</option>
+          <option value="rapidas">Mais rápidas</option>
+          <option value="demoradas">Mais demoradas</option>
+        </select>
+      </div>
+      <label class="caixa"><input id="so-favoritas" type="checkbox"> Só favoritas</label>
+    </section>
+
+    <p class="resumo" id="resumo" aria-live="polite"></p>
+
+    <div class="lista" id="lista"></div>
+
+    <section class="seccao" aria-labelledby="titulo-form">
+      <h2 id="titulo-form">Juntar uma receita</h2>
+      <p>A receita fica guardada neste browser e aparece na lista junto das outras.</p>
+
+      <form id="form-receita" novalidate>
+        <ul id="erros" role="alert" hidden></ul>
+
+        <div class="campo">
+          <label for="form-nome">Nome</label>
+          <input id="form-nome" name="nome" type="text" placeholder="Ex.: Bolo de laranja">
+        </div>
+        <div class="campo">
+          <label for="form-categoria">Categoria</label>
+          <select id="form-categoria" name="categoria">
+            <option>Sopas</option>
+            <option>Peixe</option>
+            <option>Carne</option>
+            <option>Doces</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="form-tempo">Tempo de confeção (minutos)</label>
+          <input id="form-tempo" name="tempo" type="number" min="1" placeholder="60">
+        </div>
+        <div class="campo">
+          <label for="form-imagem">Fotografia (opcional)</label>
+          <input id="form-imagem" name="imagem" type="file" accept="image/*">
+        </div>
+        <div class="campo largo">
+          <label for="form-ingredientes">Ingredientes</label>
+          <textarea id="form-ingredientes" name="ingredientes" placeholder="250 g farinha&#10;4 ovos&#10;Açúcar q.b."></textarea>
+          <small>Um ingrediente por linha.</small>
+        </div>
+        <div class="campo largo">
+          <label for="form-preparacao">Modo de preparação</label>
+          <textarea id="form-preparacao" name="preparacao" placeholder="Bata os ovos com o açúcar.&#10;Junte a farinha e leve ao forno."></textarea>
+          <small>Um passo por linha.</small>
+        </div>
+        <button class="botao largo" type="submit">Guardar receita</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>O Tacho da Mãe · HTML5, CSS3 e JavaScript ES6+</footer>
+</body>
+</html>
