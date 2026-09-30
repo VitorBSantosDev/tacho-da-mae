@@ -1,0 +1,42 @@
+:root {
+    --fundo: #f4f5f1;
+    --cartao: #ffffff;        /* fundo dos cartões, inputs e formulário */
+    --texto: #1c2231;         /* texto principal */
+    --suave: #5b6275;         /* texto secundário (legendas, categorias) */
+    --linha: #dfe2e6;
+    --azul: #2346a0;
+    --dourado: #a8740c;
+    --erro: #b3261e;        
+    --erro-fundo: #fbe9e7;
+
+    --letra-titulos: "Young Serif", Georgia, serif;
+    --letra-texto: "Alegreya Sans", "Segoe UI", sans-serif;
+
+    --raio-pequeno: 8px;      /* inputs, selects, caixa de erros */
+    --raio: 12px;             /* cartões */
+    --raio-redondo: 999px;    /* botões em forma de pílula */
+
+    --espaco-pequeno: 8px;
+    --espaco: 16px;
+    --espaco-grande: 32px;
+
+    --sombra: 0 2px 6px rgb(0 0 0 / 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --fundo: #10141d;
+        --cartao: #181e2a;
+        --texto: #e9ebf1;
+        --suave: #a2a9ba;
+        --linha: #2b3344;
+        --azul: #93aaf0;
+        --dourado: #e2b44f;
+        --erro: #ff8a80;
+        --erro-fundo: #3a1c1a;
+
+        --sombra: 0 2px 6px rgb(0 0 0 / 0.5);
+
+        color-scheme: dark; /* inputs e scrollbars também ficam escuros */
+    }
+}
