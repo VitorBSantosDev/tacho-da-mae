@@ -1,0 +1,149 @@
+[
+  {
+    "id": "bacalhau-a-bras",
+    "nome": "Bacalhau à Brás",
+    "categoria": "Peixe",
+    "imagem": "img/bacalhau-a-bras.svg",
+    "tempo": 45,
+    "ingredientes": [
+      "400 g bacalhau demolhado e desfiado",
+      "400 g batata palha",
+      "2 cebolas cortadas em meias-luas",
+      "2 dentes de alho picados",
+      "6 ovos",
+      "1 dl azeite",
+      "Azeitonas pretas e salsa picada q.b.",
+      "Sal e pimenta q.b."
+    ],
+    "preparacao": [
+      "Aqueça o azeite num tacho largo e aloure a cebola e o alho em lume brando.",
+      "Junte o bacalhau desfiado e deixe cozinhar 5 minutos, mexendo sempre.",
+      "Adicione a batata palha e envolva bem.",
+      "Bata os ovos com sal e pimenta, deite sobre o preparado e mexa em lume brando até os ovos ficarem cremosos, sem secarem.",
+      "Sirva logo, polvilhado com salsa e decorado com azeitonas."
+    ]
+  },
+  {
+    "id": "caldo-verde",
+    "nome": "Caldo Verde",
+    "categoria": "Sopas",
+    "imagem": "img/caldo-verde.svg",
+    "tempo": 40,
+    "ingredientes": [
+      "800 g batatas",
+      "1 cebola",
+      "2 dentes de alho",
+      "250 g couve-galega cortada em juliana fina",
+      "1 chouriço de carne",
+      "0,5 dl azeite",
+      "1,5 l água",
+      "Sal q.b."
+    ],
+    "preparacao": [
+      "Coza as batatas, a cebola e o alho na água com sal durante 20 minutos.",
+      "Triture tudo com a varinha mágica até obter um creme liso.",
+      "Junte o azeite e a couve e deixe ferver 5 minutos, sem tapar, para a couve ficar verde.",
+      "Sirva em tigelas de barro com uma rodela de chouriço em cada uma e um fio de azeite."
+    ]
+  },
+  {
+    "id": "arroz-doce",
+    "nome": "Arroz Doce",
+    "categoria": "Doces",
+    "imagem": "img/arroz-doce.svg",
+    "tempo": 60,
+    "ingredientes": [
+      "250 g arroz carolino",
+      "1 l leite gordo",
+      "5 dl água",
+      "200 g açúcar",
+      "4 gemas",
+      "1 casca de limão",
+      "1 pau de canela",
+      "1 pitada de sal",
+      "Canela em pó para decorar q.b."
+    ],
+    "preparacao": [
+      "Coza o arroz na água com o sal e a casca de limão até a água ser absorvida.",
+      "Aqueça o leite com o pau de canela e vá juntando ao arroz aos poucos, mexendo sempre.",
+      "Quando o arroz estiver bem cozido e cremoso, junte o açúcar e deixe ferver mais 5 minutos.",
+      "Retire do lume, tempere as gemas com um pouco do arroz e junte ao tacho, mexendo depressa.",
+      "Deite em travessas e, depois de frio, desenhe com canela em pó."
+    ]
+  },
+  {
+    "id": "pasteis-de-nata",
+    "nome": "Pastéis de Nata",
+    "categoria": "Doces",
+    "imagem": "img/pasteis-de-nata.svg",
+    "tempo": 75,
+    "ingredientes": [
+      "1 rolo de massa folhada",
+      "5 dl leite",
+      "250 g açúcar",
+      "40 g farinha",
+      "6 gemas",
+      "1 dl água",
+      "1 pau de canela",
+      "1 casca de limão"
+    ],
+    "preparacao": [
+      "Enrole a massa folhada, corte em rodelas de 2 cm e forre as formas com os polegares molhados.",
+      "Ferva a água com o açúcar, a canela e o limão durante 3 minutos para fazer a calda.",
+      "Dissolva a farinha num pouco de leite frio e junte ao restante leite a ferver, mexendo até engrossar.",
+      "Junte a calda ao creme, deixe amornar e incorpore as gemas.",
+      "Encha as formas até 3/4 e leve ao forno a 250 °C durante 12 a 15 minutos, até ficarem com manchas escuras."
+    ]
+  },
+  {
+    "id": "francesinha",
+    "nome": "Francesinha",
+    "categoria": "Carne",
+    "imagem": "img/francesinha.svg",
+    "tempo": 90,
+    "ingredientes": [
+      "8 fatias de pão de forma",
+      "4 bifes finos de vaca",
+      "4 salsichas frescas",
+      "2 linguiças",
+      "8 fatias de fiambre",
+      "16 fatias de queijo flamengo",
+      "3,3 dl cerveja",
+      "2 dl polpa de tomate",
+      "1 cálice de vinho do Porto",
+      "1 colher de sopa de maisena"
+    ],
+    "preparacao": [
+      "Para o molho, ferva a cerveja, a polpa de tomate e o vinho do Porto durante 15 minutos e engrosse com a maisena dissolvida em água.",
+      "Grelhe os bifes, as salsichas abertas ao meio e a linguiça.",
+      "Monte cada francesinha: pão, fiambre, linguiça, salsicha, bife, pão.",
+      "Cubra com 4 fatias de queijo, aconchegando nas laterais, e leve ao forno até o queijo derreter.",
+      "Regue com o molho bem quente e sirva com batatas fritas."
+    ]
+  },
+  {
+    "id": "arroz-de-pato",
+    "nome": "Arroz de Pato",
+    "categoria": "Carne",
+    "imagem": "img/arroz-de-pato.svg",
+    "tempo": 120,
+    "ingredientes": [
+      "1 pato (cerca de 2 kg)",
+      "400 g arroz carolino",
+      "1 chouriço de carne",
+      "100 g bacon em fatias",
+      "1 cebola",
+      "1 cenoura",
+      "1 limão (sumo)",
+      "2 colheres de sopa de azeite",
+      "Sal q.b."
+    ],
+    "preparacao": [
+      "Coza o pato com a cebola, a cenoura e metade do chouriço em água temperada com sal, durante cerca de 1 hora.",
+      "Desfie a carne e reserve o caldo coado.",
+      "Aloure o arroz no azeite e junte o dobro do volume em caldo quente, fervendo 10 minutos.",
+      "Numa assadeira, alterne camadas de arroz e pato. Termine com rodelas de chouriço e bacon.",
+      "Regue com o sumo de limão e leve ao forno a 200 °C durante 20 minutos, até alourar."
+    ]
+  }
+]
