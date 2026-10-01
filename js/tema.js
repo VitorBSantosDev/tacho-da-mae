@@ -1,5 +1,5 @@
 export function iniciarTema() {
-    const botao = document.querySelector('#tema');
+    const botaoTema = document.querySelector('#tema');
     const html = document.documentElement;
 
     function temaAtual() {
@@ -9,17 +9,17 @@ export function iniciarTema() {
         return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
 
-    function aplicar(tema) {
+    function aplicarTema(tema) {
         html.dataset.theme = tema;
-        botao.textContent = tema === 'dark' ? '☀ Modo claro' : '☾ Modo escuro';
+        botaoTema.textContent = tema === 'dark' ? '☀ Modo claro' : '☾ Modo escuro';
     }
 
     const guardado = localStorage.getItem('tacho-tema');
-    aplicar(guardado || temaAtual());
+    aplicarTema(guardado || temaAtual());
 
-    botao.addEventListener('click', () => {
-        const novo = temaAtual() === 'dark' ? 'light' : 'dark';
-        aplicar(novo);
-        localStorage.setItem('tacho-tema', novo);
+    botaoTema.addEventListener('click', () => {
+        const novoTema = temaAtual() === 'dark' ? 'light' : 'dark';
+        aplicarTema(novoTema);
+        localStorage.setItem('tacho-tema', novoTema);
     });
 }
