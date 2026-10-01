@@ -87,7 +87,6 @@ header {
     flex-wrap: wrap; 
     justify-content: space-between; 
     align-items: flex-start; 
-    gap: 16px;
 }
 
 .botao-tema {
@@ -130,7 +129,7 @@ header p {
     flex-direction: column; 
     gap: 4px; }
   
-.campo--pesquisa { 
+.campo-pesquisa { 
     flex: 1 1 260px; }
 
 label { 
@@ -164,3 +163,30 @@ input, select, textarea {
     height: 18px; 
     accent-color: var(--azul); 
 }
+
+.resumo-filtro { 
+    color: var(--suave); 
+    margin: 0; 
+    font-variant-numeric: tabular-nums; }
+  
+.remover {
+    align-self: flex-start; 
+    margin-top: 10px; 
+    padding: 6px 14px; 
+    border: 1px solid var(--linha);
+    border-radius: 999px; 
+    background: none; 
+    color: var(--erro); 
+    cursor: pointer; 
+    font-size: 0.92rem;
+  }
+  
+.remover:hover { 
+    border-color: var(--erro); 
+}
+
+.remover[data-confirmar="sim"] { 
+    background: var(--erro); 
+    border-color: var(--erro); 
+    color: var(--cartao); }
+
