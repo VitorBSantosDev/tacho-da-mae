@@ -191,7 +191,7 @@ input, select, textarea {
     border-color: var(--erro); 
     color: var(--cartao); }
 
-.lista {
+.lista-receitas {
     display: grid;
     gap: 20px; 
     padding-bottom: 40px;
@@ -297,7 +297,7 @@ summary {
     border-radius: var(--raio); 
 }
 
-.mensagem--erro { 
+.mensagem-erro { 
     color: var(--erro); 
 }
 
