@@ -116,3 +116,51 @@ header p {
     color: var(--suave); 
 }
 
+.filtros {
+    display: flex; 
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    align-items: end;
+    padding-block: 16px; 
+    border-block: 1px solid var(--linha);
+}
+
+.campo { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 4px; }
+  
+.campo--pesquisa { 
+    flex: 1 1 260px; }
+
+label { 
+    font-size: 0.8rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.06em; 
+    color: var(--suave); 
+    font-weight: 500; }
+
+input, select, textarea {
+    padding: 9px 12px; 
+    border: 1px solid var(--linha); 
+    border-radius: 8px; 
+    background: var(--cartao); 
+    min-width: 0;
+}
+
+.caixa { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    padding-block: 9px; 
+    text-transform: none; 
+    letter-spacing: 0; 
+    font-size: 1rem; 
+    color: var(--texto); 
+}
+
+.caixa input { 
+    width: 18px; 
+    height: 18px; 
+    accent-color: var(--azul); 
+}
