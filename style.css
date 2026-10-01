@@ -64,20 +64,21 @@ body {
 }
 
 h1, h2, h3, h4 { 
-font-family: var(--letra-titulos); 
-font-weight: 400; 
-margin: 0; 
-line-height: 1.2; }
+    font-family: var(--letra-titulos); 
+    font-weight: 400; 
+    margin: 0; 
+    line-height: 1.2; 
+}
 
 button, input, select, textarea { 
-font: inherit; 
-color: inherit; }
+    font: inherit; 
+    color: inherit; 
+}
 
 :focus-visible { 
     outline: 3px solid var(--dourado); 
-    outline-offset: 2px; }
-
-
+    outline-offset: 2px; 
+}
 
 header {
     gap: var(--espaco);
@@ -142,7 +143,7 @@ label {
 input, select, textarea {
     padding: 9px 12px; 
     border: 1px solid var(--linha); 
-    border-radius: 8px; 
+    border-radius: var(--raio-pequeno); 
     background: var(--cartao); 
     min-width: 0;
 }
@@ -150,7 +151,7 @@ input, select, textarea {
 .caixa { 
     display: flex; 
     align-items: center; 
-    gap: 8px; 
+    gap: var(--espaco-pequeno); 
     padding-block: 9px; 
     text-transform: none; 
     letter-spacing: 0; 
@@ -174,7 +175,7 @@ input, select, textarea {
     margin-top: 10px; 
     padding: 6px 14px; 
     border: 1px solid var(--linha);
-    border-radius: 999px; 
+    border-radius: var(--raio-redondo); 
     background: none; 
     color: var(--erro); 
     cursor: pointer; 
@@ -189,4 +190,114 @@ input, select, textarea {
     background: var(--erro); 
     border-color: var(--erro); 
     color: var(--cartao); }
+
+.lista {
+    display: grid;
+    gap: 20px; 
+    padding-bottom: 40px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    align-items: start;
+}
+
+.cartao { 
+    background: var(--cartao); 
+    border: 1px solid var(--linha); 
+    border-radius: var(--raio); 
+    overflow: hidden; 
+}
+
+.cartao__foto { 
+    position: relative; 
+}
+
+.cartao__foto img { 
+    display: block; 
+    width: 100%; 
+    height: auto; 
+    aspect-ratio: 4 / 3; 
+    object-fit: cover; }
+
+.favorito {
+    position: absolute; 
+    top: 10px; 
+    right: 10px; 
+    width: 42px; 
+    height: 42px; 
+    border-radius: 50%;
+    border: none; 
+    background: var(--cartao); 
+    color: var(--erro); 
+    font-size: 1.4rem; 
+    line-height: 1; 
+    cursor: pointer;
+    box-shadow: var(--sombra);
+}
+
+.cartao__corpo { 
+    padding: 16px 18px 18px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+}
+
+.cartao__categoria { 
+    margin: 0; 
+    font-size: 0.78rem; 
+    text-transform: uppercase; 
+    letter-spacing: 0.1em; 
+    color: var(--suave); 
+}
+
+.cartao__nome { 
+    font-size: 1.5rem; 
+}
+
+.cartao__tempo { 
+    margin: 0 0 6px; 
+    font-weight: 700; 
+    color: var(--dourado); 
+}
+
+.cartao h4 { 
+    font-size: 1.05rem; 
+    color: var(--azul); 
+}
+
+.cartao ul { 
+    margin: 0; 
+    padding-left: 1.2em; 
+}
+
+.cartao ol { 
+    margin: 8px 0 0; 
+    padding-left: 1.4em; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+}
+
+details { 
+    margin-top: 8px; 
+    border-top: 1px solid var(--linha); 
+    padding-top: 10px; 
+}
+
+summary { 
+    cursor: pointer; 
+    color: var(--azul); 
+    font-weight: 500; 
+}
+
+.mensagem { 
+    grid-column: 1 / -1; 
+    padding: 28px; 
+    text-align: center; 
+    color: var(--suave); 
+    border: 1px dashed var(--linha); 
+    border-radius: 12px; 
+}
+
+.mensagem--erro { 
+    color: var(--erro); 
+}
 
