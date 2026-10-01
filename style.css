@@ -59,13 +59,35 @@ body {
     background: var(--fundo);
     color: var(--texto);
     font-family: var(--letra-texto);
+    font-size: 1.06rem;
+    line-height: 1.5;
 }
 
+h1, h2, h3, h4 { 
+font-family: var(--letra-titulos); 
+font-weight: 400; 
+margin: 0; 
+line-height: 1.2; }
+
+button, input, select, textarea { 
+font: inherit; 
+color: inherit; }
+
+:focus-visible { 
+    outline: 3px solid var(--dourado); 
+    outline-offset: 2px; }
+
+
+
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
     gap: var(--espaco);
+    padding-block: 32px 20px; 
+    border-top: 8px solid var(--azul);
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    gap: 16px;
 }
 
 .botao-tema {
@@ -75,4 +97,22 @@ header {
     background: var(--cartao);
     color: var(--texto);
     cursor: pointer;
+    font-weight: 500; 
+    white-space: nowrap;
 }
+
+.botao-tema:hover { 
+    border-color: var(--azul); 
+    color: var(--azul); 
+}
+
+header h1 { 
+    font-size: clamp(2.2rem, 6vw, 3.2rem); 
+    color: var(--azul); 
+}
+
+header p { 
+    margin: 6px 0 0; 
+    color: var(--suave); 
+}
+
