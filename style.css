@@ -55,12 +55,19 @@
     color-scheme: dark;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     background: var(--fundo);
     color: var(--texto);
     font-family: var(--letra-texto);
     font-size: 1.06rem;
     line-height: 1.5;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-inline: var(--espaco);
 }
 
 h1, h2, h3, h4 { 
@@ -206,11 +213,11 @@ input, select, textarea {
     overflow: hidden; 
 }
 
-.cartao__foto { 
+.cartao-foto { 
     position: relative; 
 }
 
-.cartao__foto img { 
+.cartao-foto img { 
     display: block; 
     width: 100%; 
     height: auto; 
@@ -233,14 +240,14 @@ input, select, textarea {
     box-shadow: var(--sombra);
 }
 
-.cartao__corpo { 
+.cartao-corpo { 
     padding: 16px 18px 18px; 
     display: flex; 
     flex-direction: column; 
     gap: 6px; 
 }
 
-.cartao__categoria { 
+.cartao-categoria { 
     margin: 0; 
     font-size: 0.78rem; 
     text-transform: uppercase; 
@@ -248,11 +255,11 @@ input, select, textarea {
     color: var(--suave); 
 }
 
-.cartao__nome { 
+.cartao-nome { 
     font-size: 1.5rem; 
 }
 
-.cartao__tempo { 
+.cartao-tempo { 
     margin: 0 0 6px; 
     font-weight: 700; 
     color: var(--dourado); 
