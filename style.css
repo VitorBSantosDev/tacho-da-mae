@@ -82,7 +82,7 @@ button, input, select, textarea {
 
 header {
     gap: var(--espaco);
-    padding-block: 32px 20px; 
+    padding-block: var(--espaco-grande) 20px; 
     border-top: 8px solid var(--azul);
     display: flex; 
     flex-wrap: wrap; 
@@ -121,7 +121,7 @@ header p {
     flex-wrap: wrap;
     gap: 12px 20px;
     align-items: end;
-    padding-block: 16px; 
+    padding-block: var(--espaco); 
     border-block: 1px solid var(--linha);
 }
 
@@ -269,7 +269,7 @@ input, select, textarea {
 }
 
 .cartao ol { 
-    margin: 8px 0 0; 
+    margin: var(--espaco-pequeno) 0 0; 
     padding-left: 1.4em; 
     display: flex; 
     flex-direction: column; 
@@ -277,7 +277,7 @@ input, select, textarea {
 }
 
 details { 
-    margin-top: 8px; 
+    margin-top: var(--espaco-pequeno); 
     border-top: 1px solid var(--linha); 
     padding-top: 10px; 
 }
@@ -294,10 +294,71 @@ summary {
     text-align: center; 
     color: var(--suave); 
     border: 1px dashed var(--linha); 
-    border-radius: 12px; 
+    border-radius: var(--raio); 
 }
 
 .mensagem--erro { 
     color: var(--erro); 
 }
 
+.seccao { 
+    padding-block: var(--espaco-grande); 
+    border-top: 1px solid var(--linha); 
+}
+
+.seccao h2 { 
+    font-size: 1.8rem; 
+    color: var(--azul); 
+}
+
+.seccao > p { 
+    color: var(--suave); 
+    max-width: 65ch; 
+    margin: 6px 0 20px; 
+}
+
+form { 
+    display: grid; 
+    gap: 16px; 
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); 
+}
+
+.largo { 
+    grid-column: 1 / -1; 
+}
+
+textarea { 
+    min-height: 120px; 
+    resize: vertical; 
+}
+
+small { 
+    color: var(--suave); 
+}
+
+#erros { 
+    grid-column: 1 / -1; 
+    margin: 0; 
+    padding: 12px 12px 12px 32px; 
+    background: var(--erro-fundo); 
+    color: var(--erro); 
+    border-radius: var(--raio-pequeno); 
+}
+
+.botao {
+    justify-self: start; 
+    padding: 10px 22px; 
+    border: none; 
+    border-radius: var(--raio-redondo);
+    background: var(--azul); 
+    color: var(--fundo); 
+    font-weight: 700; 
+    cursor: pointer;
+}
+
+  footer { 
+    padding-block: 20px 40px; 
+    color: var(--suave); 
+    font-size: 0.9rem; 
+    border-top: 1px solid var(--linha); 
+}
