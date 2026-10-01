@@ -1,5 +1,6 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
+import { formatarTempo } from './utilitarias.js';
 
 const listaReceitas = document.querySelector("#lista-receitas");
 let receitas = [];
@@ -42,7 +43,7 @@ function criarCartao(receita){
 
     categoriaReceita.textContent = receita.categoria;
     nomeReceita.textContent = receita.nome;
-    tempoReceita.textContent = `${receita.tempo} min`;
+    tempoReceita.textContent = `⏱ ${formatarTempo(receita.tempo)}`
     imagemReceita.alt = receita.nome;
 
     const listaIngredientes = cartao.querySelector(".cartao-ingredientes");
