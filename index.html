@@ -42,7 +42,10 @@
       <label class="caixa"><input id="so-favoritas" type="checkbox"> Só favoritas</label>
     </section>
 
-    <p class="resumo" id="resumo" aria-live="polite"></p>
+    <div class="barra-resumo">
+      <p class="resumo" id="resumo" aria-live="polite"></p>
+      <button id="repor-removidas" class="botao-tema" type="button" hidden>Repor receitas removidas</button>
+    </div>
 
     <div class="lista" id="lista"></div>
 
@@ -89,6 +92,12 @@
     </section>
   </main>
 
-  <footer>O Tacho da Mãe · HTML5, CSS3 e JavaScript ES6+</footer>
+    <footer>
+        <div class="footer-left">
+            <strong class="footer-name">Vitor Santos&nbsp;&nbsp;</strong>
+            <span class="footer-trademark">© 2026 • ServiceNow Trainee • Aplicação de Receitas </span>
+        </div>
+        <a href="header" class="footer-back-top">Início ↑</a>
+    </footer>
 </body>
 </html>
