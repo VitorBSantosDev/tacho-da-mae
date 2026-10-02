@@ -7,6 +7,7 @@ let receitas = [];
 const filtroPesquisa = document.querySelector("#pesquisa");
 const filtroCategoria = document.querySelector("#categoria");
 const filtroOrdem = document.querySelector("#ordem");
+const filtroResumo = document.querySelector("#resumo-filtro");
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -17,7 +18,6 @@ async function iniciarListaReceitas(){
         mostrarReceitas()
     } catch (erro) {
         listaReceitas.innerHTML = `<p class="mensagem mensagem-erro">Erro. ${erro.message}. Tente novamente mais tarde.</p>`
-        
     }
 }
 
@@ -78,6 +78,22 @@ function mostrarReceitas(){
             listaReceitas.appendChild(criarCartao(receita));
         }
     }
+    mostrarResumoFiltro(receitasVisiveis);
+}
+
+function mostrarResumoFiltro(receitasVisiveis){
+    const quantidade = receitasVisiveis.length;
+
+    if (quantidade === 0){
+        filtroResumo.textContent = "0 receitas";
+        return;
+    }
+
+    const somaTempo = receitasVisiveis.reduce((soma, receita) => soma + receita.tempo, 0);
+    const mediaTempo = formatarTempo(Math.round(somaTempo / quantidade));
+    const palavraReceita = quantidade === 1 ? "receita" : "receitas";
+
+    filtroResumo.textContent = `${quantidade} ${palavraReceita} · tempo médio ${mediaTempo} · 0 favoritas`;
 }
 
 function obterReceitasVisiveis(){
@@ -95,7 +111,7 @@ function obterReceitasVisiveis(){
         return true;
     })
 
-    const receitasFiltradasOrdenadas = [...receitasFiltradas]
+    const receitasFiltradasOrdenadas = [...receitasFiltradas];
 
     switch (valorOrdem){
         case "rapidas":
