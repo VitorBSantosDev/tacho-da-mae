@@ -1,6 +1,7 @@
 export function formatarTempo(minutos){
-    const horas = Math.floor(minutos / 60);
-    const minutosRestantes = minutos % 60;
+    const minutosHora = 60;
+    const horas = Math.floor(minutos / minutosHora);
+    const minutosRestantes = minutos % minutosHora;
 
     if (horas < 1){
         return `${minutosRestantes} min`;
