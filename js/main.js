@@ -1,6 +1,7 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
 import { formatarTempo, limparTexto } from './utilitarias.js';
+import { criarFavoritos } from './favoritos.js';
 
 const listaReceitas = document.querySelector("#lista-receitas");
 let receitas = [];
@@ -8,6 +9,8 @@ const filtroPesquisa = document.querySelector("#pesquisa");
 const filtroCategoria = document.querySelector("#categoria");
 const filtroOrdem = document.querySelector("#ordem");
 const filtroResumo = document.querySelector("#resumo-filtro");
+const favoritos = criarFavoritos();
+const filtroFavorito = document.querySelector("#so-favoritas");
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -27,6 +30,7 @@ function criarCartao(receita){
     cartao.innerHTML = `
         <div class="cartao-foto">
             <img src="${receita.imagem}">
+            <button class="favorito" type="button"></button>
         </div>
         <div class="cartao-corpo">
             <p class="cartao-categoria"></p>
@@ -43,11 +47,22 @@ function criarCartao(receita){
     const nomeReceita = cartao.querySelector(".cartao-nome");
     const tempoReceita = cartao.querySelector(".cartao-tempo");
     const imagemReceita = cartao.querySelector("img");
+    const botaoFavorito = cartao.querySelector(".favorito");
 
     categoriaReceita.textContent = receita.categoria;
     nomeReceita.textContent = receita.nome;
     tempoReceita.textContent = `⏱ ${formatarTempo(receita.tempo)}`
     imagemReceita.alt = receita.nome;
+
+    const ehFavorito = favoritos.verificarSeEhFavorito(receita.id);
+
+    botaoFavorito.textContent = ehFavorito ? "♥" : "♡";
+    botaoFavorito.setAttribute("aria-label", ehFavorito ? "Tirar dos favoritos" : "Adicionar aos favoritos");
+
+    botaoFavorito.addEventListener("click", () => {
+        favoritos.adicionarOuRemover(receita.id);
+        mostrarReceitas();
+    })
 
     const listaIngredientes = cartao.querySelector(".cartao-ingredientes");
 
@@ -92,14 +107,16 @@ function mostrarResumoFiltro(receitasVisiveis){
     const somaTempo = receitasVisiveis.reduce((soma, receita) => soma + receita.tempo, 0);
     const mediaTempo = formatarTempo(Math.round(somaTempo / quantidade));
     const palavraReceita = quantidade === 1 ? "receita" : "receitas";
+    const palavraFavorito = favoritos.contarFavoritos() === 1 ? "favorita" : "favoritas"
 
-    filtroResumo.textContent = `${quantidade} ${palavraReceita} · tempo médio ${mediaTempo} · 0 favoritas`;
+    filtroResumo.textContent = `${quantidade} ${palavraReceita} · tempo médio ${mediaTempo} · ${favoritos.contarFavoritos()} ${palavraFavorito}`;
 }
 
 function obterReceitasVisiveis(){
     const valorPesquisa = limparTexto(filtroPesquisa.value);
     const valorCategoria = filtroCategoria.value;
     const valorOrdem = filtroOrdem.value;
+    const valorFavorito = filtroFavorito.checked;
 
     const receitasFiltradas = receitas.filter(receita => {
         if (!limparTexto(receita.nome).includes(valorPesquisa)){
@@ -108,6 +125,10 @@ function obterReceitasVisiveis(){
         if (valorCategoria !== "Todas" && receita.categoria !== valorCategoria){
             return false;
         }
+        if (valorFavorito && !favoritos.verificarSeEhFavorito(receita.id)){
+            return false;
+        }
+        
         return true;
     })
 
@@ -127,6 +148,7 @@ function obterReceitasVisiveis(){
     return receitasFiltradasOrdenadas;
 }
 
+filtroFavorito.addEventListener("change", mostrarReceitas);
 filtroPesquisa.addEventListener("input", mostrarReceitas);
 filtroCategoria.addEventListener("change", mostrarReceitas);
 filtroOrdem.addEventListener("change", mostrarReceitas);
