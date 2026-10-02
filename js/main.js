@@ -1,9 +1,12 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo } from './utilitarias.js';
+import { formatarTempo, limparTexto } from './utilitarias.js';
 
 const listaReceitas = document.querySelector("#lista-receitas");
 let receitas = [];
+const filtroPesquisa = document.querySelector("#pesquisa");
+const filtroCategoria = document.querySelector("#categoria");
+const filtroOrdem = document.querySelector("#ordem");
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -65,16 +68,52 @@ function criarCartao(receita){
 }
 
 function mostrarReceitas(){
+    const receitasVisiveis = obterReceitasVisiveis();
     listaReceitas.innerHTML = "";
 
-    if (receitas.length === 0){
+    if (receitasVisiveis.length === 0){
         listaReceitas.innerHTML = `<p class="mensagem">Nenhuma receita encontrada</p>`
     } else{
-        for (const receita of receitas){
+        for (const receita of receitasVisiveis){
             listaReceitas.appendChild(criarCartao(receita));
         }
     }
 }
+
+function obterReceitasVisiveis(){
+    const valorPesquisa = limparTexto(filtroPesquisa.value);
+    const valorCategoria = filtroCategoria.value;
+    const valorOrdem = filtroOrdem.value;
+
+    const receitasFiltradas = receitas.filter(receita => {
+        if (!limparTexto(receita.nome).includes(valorPesquisa)){
+            return false;
+        }
+        if (valorCategoria !== "Todas" && receita.categoria !== valorCategoria){
+            return false;
+        }
+        return true;
+    })
+
+    const receitasFiltradasOrdenadas = [...receitasFiltradas]
+
+    switch (valorOrdem){
+        case "rapidas":
+            receitasFiltradasOrdenadas.sort((receitaA, receitaB) => receitaA.tempo - receitaB.tempo)
+            break;
+        case "demoradas":
+            receitasFiltradasOrdenadas.sort((receitaA, receitaB) => receitaB.tempo - receitaA.tempo)
+            break;
+        default:
+            receitasFiltradasOrdenadas.sort((receitaA, receitaB) => receitaA.nome.localeCompare(receitaB.nome));
+            break;
+    }
+    return receitasFiltradasOrdenadas;
+}
+
+filtroPesquisa.addEventListener("input", mostrarReceitas);
+filtroCategoria.addEventListener("change", mostrarReceitas);
+filtroOrdem.addEventListener("change", mostrarReceitas);
 
 iniciarTema();
 iniciarListaReceitas();

@@ -10,3 +10,7 @@ export function formatarTempo(minutos){
         return `${horas} h ${minutosRestantes} min`;
     }
 }
+
+export function limparTexto(texto){
+    return texto.toLowerCase().trim();
+}
