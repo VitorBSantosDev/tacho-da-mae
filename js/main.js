@@ -1,6 +1,6 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo, limparTexto } from './utilitarias.js';
+import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
 
 const listaReceitas = document.querySelector("#lista-receitas");
@@ -11,6 +11,11 @@ const filtroOrdem = document.querySelector("#ordem");
 const filtroResumo = document.querySelector("#resumo-filtro");
 const favoritos = criarFavoritos();
 const filtroFavorito = document.querySelector("#so-favoritas");
+const formAdicionarReceita = document.querySelector("#form-adicionar-receita");
+const listaErros = document.querySelector("#erros");
+const mensagemSucesso = document.querySelector("#mensagem-sucesso");
+const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
+let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -117,8 +122,9 @@ function obterReceitasVisiveis(){
     const valorCategoria = filtroCategoria.value;
     const valorOrdem = filtroOrdem.value;
     const valorFavorito = filtroFavorito.checked;
+    const receitasCombinadas = [...receitas, ...minhasReceitas];
 
-    const receitasFiltradas = receitas.filter(receita => {
+    const receitasFiltradas = receitasCombinadas.filter(receita => {
         if (!limparTexto(receita.nome).includes(valorPesquisa)){
             return false;
         }
@@ -152,6 +158,29 @@ filtroFavorito.addEventListener("change", mostrarReceitas);
 filtroPesquisa.addEventListener("input", mostrarReceitas);
 filtroCategoria.addEventListener("change", mostrarReceitas);
 filtroOrdem.addEventListener("change", mostrarReceitas);
+formAdicionarReceita.addEventListener("submit", (evento) => {
+    evento.preventDefault();
+    const receitaNova = {id: `minha-${Date.now()}`, nome: formAdicionarReceita.nome.value.trim(), categoria: formAdicionarReceita.categoria.value, imagem: "img/sem-imagem.svg", tempo: Number(formAdicionarReceita.tempo.value), ingredientes: converterTextoParaLista(formAdicionarReceita.ingredientes.value), preparacao: converterTextoParaLista(formAdicionarReceita.preparacao.value)}
+    const erros = validarReceita(receitaNova);
+
+    if (erros.length > 0){
+        listaErros.innerHTML = erros.map(erro => `<li>${erro}</li>`).join("");
+        listaErros.hidden = false;
+        mensagemSucesso.hidden = true;
+        return;
+    }
+    listaErros.hidden = true;
+    minhasReceitas = [...minhasReceitas, receitaNova];
+    guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
+    formAdicionarReceita.reset();
+    mostrarReceitas()
+    
+    mensagemSucesso.textContent = `A receita "${receitaNova.nome}" foi adicionada com sucesso.`
+    mensagemSucesso.hidden = false;
+    setTimeout(() => {
+        mensagemSucesso.hidden = true;
+    }, 5000);
+} )
 
 iniciarTema();
 iniciarListaReceitas();
