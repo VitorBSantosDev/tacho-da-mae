@@ -42,3 +42,26 @@ export function lerLocalStorage(chave, valorDefeito){
         return valorDefeito;
     }
 }
+
+export function validarReceita(receita){
+    const listaErros = [];
+
+    if (receita.nome.length < 3){
+        listaErros.push("O nome precisa de pelo menos 3 letras.");
+    }
+    if (isNaN(receita.tempo) || receita.tempo <= 0){
+        listaErros.push("O tempo tem de ser um número maior que 0.");
+    }
+    if (receita.ingredientes.length === 0){
+        listaErros.push("Escreva pelo menos um ingrediente.");
+    }
+    if (receita.preparacao.length === 0){
+        listaErros.push("Escreva pelo menos um passo da preparação.");
+    }
+
+    return listaErros;
+}
+
+export function converterTextoParaLista(texto){
+    return texto.split("\n").map(linha => linha.trim()).filter(linha => linha !== "");
+}
