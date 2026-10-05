@@ -16,6 +16,9 @@ const listaErros = document.querySelector("#erros");
 const mensagemSucesso = document.querySelector("#mensagem-sucesso");
 const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
 let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
+const CHAVE_REMOVIDAS = "tacho-removidas";
+let removidas = lerLocalStorage(CHAVE_REMOVIDAS, []);
+const btnReporRemovidas = document.querySelector("#repor-removidas");
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -47,6 +50,7 @@ function criarCartao(receita){
                 <summary>Modo de preparação (${receita.preparacao.length} passos)</summary>
                 <ol class="cartao-passos"></ol>
             </details>
+            <button class="remover" type="button">Remover receita</button>
         </div>`
     const categoriaReceita = cartao.querySelector(".cartao-categoria");
     const nomeReceita = cartao.querySelector(".cartao-nome");
@@ -69,6 +73,14 @@ function criarCartao(receita){
         mostrarReceitas();
     })
 
+    const btnRemoverReceita = cartao.querySelector(".remover");
+
+    btnRemoverReceita.addEventListener("click", () => {
+        if (confirm(`Remover ${receita.nome}`)){
+            removerReceita(receita);
+        }
+    })
+
     const listaIngredientes = cartao.querySelector(".cartao-ingredientes");
 
     receita.ingredientes.forEach(ingrediente => {
@@ -87,6 +99,20 @@ function criarCartao(receita){
     return cartao;
 }
 
+function removerReceita(receitaRemover){
+    if (receitaRemover.id.startsWith("minha-")){
+        minhasReceitas = minhasReceitas.filter(receita => receita.id !== receitaRemover.id);
+        guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
+    } else{
+        removidas = [...removidas, receitaRemover.id];
+        guardarLocalStorage(CHAVE_REMOVIDAS, removidas);
+    }
+    if (favoritos.verificarSeEhFavorito(receitaRemover.id)){
+        favoritos.adicionarOuRemover(receitaRemover.id);
+    }
+    mostrarReceitas();
+}
+
 function mostrarReceitas(){
     const receitasVisiveis = obterReceitasVisiveis();
     listaReceitas.innerHTML = "";
@@ -99,6 +125,8 @@ function mostrarReceitas(){
         }
     }
     mostrarResumoFiltro(receitasVisiveis);
+    btnReporRemovidas.hidden = removidas.length === 0;
+    btnReporRemovidas.textContent = `Repor receitas removidas (${removidas.length})`
 }
 
 function mostrarResumoFiltro(receitasVisiveis){
@@ -125,6 +153,9 @@ function obterReceitasVisiveis(){
     const receitasCombinadas = [...receitas, ...minhasReceitas];
 
     const receitasFiltradas = receitasCombinadas.filter(receita => {
+        if (removidas.includes(receita.id)){
+            return false;
+        }
         if (!limparTexto(receita.nome).includes(valorPesquisa)){
             return false;
         }
@@ -134,7 +165,7 @@ function obterReceitasVisiveis(){
         if (valorFavorito && !favoritos.verificarSeEhFavorito(receita.id)){
             return false;
         }
-        
+
         return true;
     })
 
@@ -180,7 +211,12 @@ formAdicionarReceita.addEventListener("submit", (evento) => {
     setTimeout(() => {
         mensagemSucesso.hidden = true;
     }, 5000);
-} )
+});
+btnReporRemovidas.addEventListener("click", () => {
+    removidas = [];
+    guardarLocalStorage(CHAVE_REMOVIDAS, removidas);
+    mostrarReceitas();
+})
 
 iniciarTema();
 iniciarListaReceitas();

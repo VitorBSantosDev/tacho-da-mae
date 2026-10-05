@@ -181,6 +181,15 @@ input, select, textarea {
     accent-color: var(--azul); 
 }
 
+.barra-resumo-filtro {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--espaco-pequeno) var(--espaco);
+    padding-block: var(--espaco);
+}
+
 .resumo-filtro { 
     color: var(--suave); 
     margin: 0; 
@@ -201,11 +210,6 @@ input, select, textarea {
 .remover:hover { 
     border-color: var(--erro); 
 }
-
-.remover[data-confirmar="sim"] { 
-    background: var(--erro); 
-    border-color: var(--erro); 
-    color: var(--cartao); }
 
 .lista-receitas {
     display: grid;
