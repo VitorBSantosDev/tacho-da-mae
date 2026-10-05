@@ -1,6 +1,6 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista } from './utilitarias.js';
+import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, reduzirImagem } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
 
 const listaReceitas = document.querySelector("#lista-receitas");
@@ -25,7 +25,6 @@ async function iniciarListaReceitas(){
 
     try {
         receitas = await carregarReceitas()
-        console.log(receitas);
         mostrarReceitas()
     } catch (erro) {
         listaReceitas.innerHTML = `<p class="mensagem mensagem-erro">Erro. ${erro.message}. Tente novamente mais tarde.</p>`
@@ -76,7 +75,7 @@ function criarCartao(receita){
     const btnRemoverReceita = cartao.querySelector(".remover");
 
     btnRemoverReceita.addEventListener("click", () => {
-        if (confirm(`Remover ${receita.nome}`)){
+        if (confirm(`Remover ${receita.nome}?`)){
             removerReceita(receita);
         }
     })
@@ -189,9 +188,17 @@ filtroFavorito.addEventListener("change", mostrarReceitas);
 filtroPesquisa.addEventListener("input", mostrarReceitas);
 filtroCategoria.addEventListener("change", mostrarReceitas);
 filtroOrdem.addEventListener("change", mostrarReceitas);
-formAdicionarReceita.addEventListener("submit", (evento) => {
+formAdicionarReceita.addEventListener("submit", async (evento) => {
     evento.preventDefault();
-    const receitaNova = {id: `minha-${Date.now()}`, nome: formAdicionarReceita.nome.value.trim(), categoria: formAdicionarReceita.categoria.value, imagem: "img/sem-imagem.svg", tempo: Number(formAdicionarReceita.tempo.value), ingredientes: converterTextoParaLista(formAdicionarReceita.ingredientes.value), preparacao: converterTextoParaLista(formAdicionarReceita.preparacao.value)}
+    
+    const receitaNova = {
+        id: `minha-${Date.now()}`, 
+        nome: formAdicionarReceita.nome.value.trim(), 
+        categoria: formAdicionarReceita.categoria.value, 
+        imagem: "img/sem-imagem.svg", 
+        tempo: Number(formAdicionarReceita.tempo.value), 
+        ingredientes: converterTextoParaLista(formAdicionarReceita.ingredientes.value), 
+        preparacao: converterTextoParaLista(formAdicionarReceita.preparacao.value)};
     const erros = validarReceita(receitaNova);
 
     if (erros.length > 0){
@@ -200,13 +207,27 @@ formAdicionarReceita.addEventListener("submit", (evento) => {
         mensagemSucesso.hidden = true;
         return;
     }
+
+    const ficheiro = formAdicionarReceita.imagem.files[0];
+
+    if (ficheiro){
+        try {
+            receitaNova.imagem = await reduzirImagem(ficheiro);
+        } catch (erro) {
+            listaErros.innerHTML = `<li>${erro.message}</li>`;
+            listaErros.hidden = false;
+            mensagemSucesso.hidden = true;
+            return;
+        }
+    }
+
     listaErros.hidden = true;
     minhasReceitas = [...minhasReceitas, receitaNova];
     guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
     formAdicionarReceita.reset();
-    mostrarReceitas()
+    mostrarReceitas();
     
-    mensagemSucesso.textContent = `A receita "${receitaNova.nome}" foi adicionada com sucesso.`
+    mensagemSucesso.textContent = `A receita "${receitaNova.nome}" foi adicionada com sucesso.`;
     mensagemSucesso.hidden = false;
     setTimeout(() => {
         mensagemSucesso.hidden = true;

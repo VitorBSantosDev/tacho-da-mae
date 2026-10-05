@@ -65,3 +65,28 @@ export function validarReceita(receita){
 export function converterTextoParaLista(texto){
     return texto.split("\n").map(linha => linha.trim()).filter(linha => linha !== "");
 }
+
+export function reduzirImagem(ficheiro, largura = 400, altura = 300){
+    return createImageBitmap(ficheiro)
+        .then(imagem => {
+            const tela = document.createElement("canvas");
+            tela.width = largura;
+            tela.height = altura;
+
+            const escala = Math.max(largura / imagem.width, altura / imagem.height);
+            const novaLargura = imagem.width * escala;
+            const novaAltura = imagem.height * escala;
+
+            const x = (largura - novaLargura) / 2;
+            const y = (altura - novaAltura) / 2;
+
+            const contexto = tela.getContext("2d");
+            contexto.drawImage(imagem, x, y, novaLargura, novaAltura);
+
+            return tela.toDataURL("image/jpeg", 0.7);
+        })
+        .catch(() => {
+            throw new Error("O ficheiro escolhido não é uma imagem válida.");
+        });
+}
+
