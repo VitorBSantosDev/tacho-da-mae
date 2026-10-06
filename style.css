@@ -471,6 +471,46 @@ dialog::backdrop {
     scroll-margin-top: var(--espaco);
 }
 
+#modal-confirmar {
+    width: min(420px, calc(100% - 32px));
+}
+
+#confirmar-titulo {
+    font-size: 1.5rem;
+    color: var(--azul);
+}
+
+#confirmar-texto {
+    margin: var(--espaco-pequeno) 0 0;
+    color: var(--suave);
+}
+
+.confirmar-acoes {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--espaco-pequeno);
+    margin-top: var(--espaco-grande);
+}
+
+.confirmar-acoes button {
+    padding: var(--espaco-pequeno) var(--espaco);
+    border-radius: var(--raio-redondo);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#confirmar-cancelar {
+    border: 1px solid var(--linha);
+    background: var(--cartao);
+}
+
+#confirmar-sim {
+    border: none;
+    background: var(--erro);
+    color: var(--cartao);
+}
+
 @media (hover: hover) {
     .botao-tema:hover { 
         border-color: var(--azul); 
@@ -497,6 +537,15 @@ dialog::backdrop {
     .atalhos .atalho-principal:hover {
         background: var(--azul);
         filter: brightness(1.12);
+    }
+
+    #confirmar-cancelar:hover {
+        border-color: var(--azul);
+        color: var(--azul);
+    }
+
+    #confirmar-sim:hover {
+        filter: brightness(1.1);
     }
 }
 
