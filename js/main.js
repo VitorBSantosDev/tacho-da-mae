@@ -14,6 +14,7 @@ const filtroFavorito = document.querySelector("#so-favoritas");
 const formAdicionarReceita = document.querySelector("#form-adicionar-receita");
 const listaErros = document.querySelector("#erros");
 const mensagemSucesso = document.querySelector("#mensagem-sucesso");
+let temporizadorSucesso;
 const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
 let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
 const CHAVE_REMOVIDAS = "tacho-removidas";
@@ -248,6 +249,7 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
         listaErros.innerHTML = erros.map(erro => `<li>${erro}</li>`).join("");
         listaErros.hidden = false;
         mensagemSucesso.hidden = true;
+        clearTimeout(temporizadorSucesso);
         return;
     }
 
@@ -260,6 +262,7 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
             listaErros.innerHTML = `<li>${erro.message}</li>`;
             listaErros.hidden = false;
             mensagemSucesso.hidden = true;
+            clearTimeout(temporizadorSucesso);
             return;
         }
     }
@@ -273,7 +276,9 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
     
     mensagemSucesso.textContent = `A receita "${receitaNova.nome}" foi adicionada com sucesso.`;
     mensagemSucesso.hidden = false;
-    setTimeout(() => {
+
+    clearTimeout(temporizadorSucesso);
+    temporizadorSucesso = setTimeout(() => {
         mensagemSucesso.hidden = true;
     }, 5000);
 });
