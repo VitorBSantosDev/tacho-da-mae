@@ -26,6 +26,11 @@ const modalTitulo = document.querySelector("#modal-titulo");
 const modalPassos = document.querySelector("#modal-passos");
 const btnModalFechar = document.querySelector("#modal-fechar");
 const modalImagem = document.querySelector("#modal-imagem");
+const modalConfirmar = document.querySelector("#modal-confirmar");
+const confirmarTexto = document.querySelector("#confirmar-texto");
+const btnConfirmarCancelar = document.querySelector("#confirmar-cancelar");
+const btnConfirmarSim = document.querySelector("#confirmar-sim");
+let receitaPorRemover = null;
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -79,9 +84,7 @@ function criarCartao(receita){
     const btnRemoverReceita = cartao.querySelector(".remover");
 
     btnRemoverReceita.addEventListener("click", () => {
-        if (confirm(`Remover ${receita.nome}?`)){
-            removerReceita(receita);
-        }
+        pedirConfirmacaoRemover(receita);
     })
 
     const listaIngredientes = cartao.querySelector(".cartao-ingredientes");
@@ -112,6 +115,12 @@ function abrirPreparacao(receita){
         modalPassos.appendChild(passoLi);
     })
     modalPreparacao.showModal();
+}
+
+function pedirConfirmacaoRemover(receita){
+    receitaPorRemover = receita;
+    confirmarTexto.textContent = `A receita "${receita.nome}" vai ser removida da aplicação.`;
+    modalConfirmar.showModal();
 }
 
 function removerReceita(receitaRemover){
@@ -296,6 +305,22 @@ btnModalFechar.addEventListener("click", () => {
 modalPreparacao.addEventListener("click", (evento) => {
     if (evento.target === modalPreparacao){
         modalPreparacao.close();
+    }
+})
+
+btnConfirmarCancelar.addEventListener("click", () => {
+    modalConfirmar.close();
+})
+
+btnConfirmarSim.addEventListener("click", () => {
+    removerReceita(receitaPorRemover);
+    receitaPorRemover = null;
+    modalConfirmar.close();
+})
+
+modalConfirmar.addEventListener("click", (evento) => {
+    if (evento.target === modalConfirmar){
+        modalConfirmar.close();
     }
 })
 
