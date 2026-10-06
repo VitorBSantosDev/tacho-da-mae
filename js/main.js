@@ -1,6 +1,6 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, reduzirImagem } from './utilitarias.js';
+import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, reduzirImagem, guardarSessionStorage, lerSessionStorage, apagarSessionStorage } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
 
 const listaReceitas = document.querySelector("#lista-receitas");
@@ -19,6 +19,8 @@ let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
 const CHAVE_REMOVIDAS = "tacho-removidas";
 let removidas = lerLocalStorage(CHAVE_REMOVIDAS, []);
 const btnReporRemovidas = document.querySelector("#repor-removidas");
+const CHAVE_RASCUNHO = "tacho-rascunho";
+
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -184,10 +186,38 @@ function obterReceitasVisiveis(){
     return receitasFiltradasOrdenadas;
 }
 
+function guardarRascunho(){
+    const rascunhoGuardado = {
+        nome: formAdicionarReceita.nome.value, 
+        categoria: formAdicionarReceita.categoria.value, 
+        tempo: formAdicionarReceita.tempo.value, 
+        ingredientes: formAdicionarReceita.ingredientes.value, 
+        preparacao: formAdicionarReceita.preparacao.value
+    };
+
+    guardarSessionStorage(CHAVE_RASCUNHO, rascunhoGuardado);
+}
+
+function reporRascunho(){
+    const rascunho = lerSessionStorage(CHAVE_RASCUNHO, null);
+
+    if (rascunho === null){
+        return;
+    }
+
+    formAdicionarReceita.nome.value = rascunho.nome;
+    formAdicionarReceita.categoria.value = rascunho.categoria;
+    formAdicionarReceita.tempo.value = rascunho.tempo;
+    formAdicionarReceita.ingredientes.value = rascunho.ingredientes;
+    formAdicionarReceita.preparacao.value = rascunho.preparacao;
+}
+
 filtroFavorito.addEventListener("change", mostrarReceitas);
 filtroPesquisa.addEventListener("input", mostrarReceitas);
 filtroCategoria.addEventListener("change", mostrarReceitas);
 filtroOrdem.addEventListener("change", mostrarReceitas);
+formAdicionarReceita.addEventListener("input", guardarRascunho);
+
 formAdicionarReceita.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     
@@ -225,6 +255,7 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
     minhasReceitas = [...minhasReceitas, receitaNova];
     guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
     formAdicionarReceita.reset();
+    apagarSessionStorage(CHAVE_RASCUNHO);
     mostrarReceitas();
     
     mensagemSucesso.textContent = `A receita "${receitaNova.nome}" foi adicionada com sucesso.`;
@@ -241,3 +272,4 @@ btnReporRemovidas.addEventListener("click", () => {
 
 iniciarTema();
 iniciarListaReceitas();
+reporRascunho();
