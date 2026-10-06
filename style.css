@@ -197,7 +197,7 @@ input, select, textarea {
   
 .remover {
     align-self: flex-start; 
-    margin-top: 10px; 
+    margin-top: auto;
     padding: 6px 14px; 
     border: 1px solid var(--linha);
     border-radius: var(--raio-redondo); 
@@ -205,7 +205,7 @@ input, select, textarea {
     color: var(--erro); 
     cursor: pointer; 
     font-size: 0.92rem;
-  }
+}
   
 .remover:hover { 
     border-color: var(--erro); 
@@ -216,7 +216,6 @@ input, select, textarea {
     gap: 20px; 
     padding-bottom: 40px;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-    align-items: start;
 }
 
 .cartao { 
@@ -224,6 +223,8 @@ input, select, textarea {
     border: 1px solid var(--linha); 
     border-radius: var(--raio); 
     overflow: hidden; 
+    display: flex;
+    flex-direction: column;
 }
 
 .cartao-foto { 
@@ -258,6 +259,7 @@ input, select, textarea {
     display: flex; 
     flex-direction: column; 
     gap: 6px; 
+    flex: 1;
 }
 
 .cartao-categoria { 
@@ -286,26 +288,6 @@ input, select, textarea {
 .cartao ul { 
     margin: 0; 
     padding-left: 1.2em; 
-}
-
-.cartao ol { 
-    margin: var(--espaco-pequeno) 0 0; 
-    padding-left: 1.4em; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 6px; 
-}
-
-details { 
-    margin-top: var(--espaco-pequeno); 
-    border-top: 1px solid var(--linha); 
-    padding-top: 10px; 
-}
-
-summary { 
-    cursor: pointer; 
-    color: var(--azul); 
-    font-weight: 500; 
 }
 
 .mensagem { 
@@ -390,4 +372,76 @@ small {
     color: var(--suave); 
     font-size: 0.9rem; 
     border-top: 1px solid var(--linha); 
+}
+
+.ver-preparacao {
+    align-self: flex-start;
+    margin-top: var(--espaco-pequeno);
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--azul);
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+}
+
+.ver-preparacao:hover {
+    text-decoration: underline;
+}
+
+dialog {
+    width: min(600px, calc(100% - 32px));
+    max-height: calc(100% - 64px);
+    padding: 0;
+    overflow: auto;
+    border: none;
+    border-radius: var(--raio);
+    background: var(--cartao);
+    color: var(--texto);
+    box-shadow: var(--sombra);
+}
+
+dialog::backdrop {
+    background: rgb(0 0 0 / 0.5);
+}
+
+#modal-imagem {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    object-fit: cover;
+}
+
+.modal-corpo {
+    padding: var(--espaco-grande);
+}
+
+#modal-titulo {
+    font-size: 1.8rem;
+    color: var(--azul);
+}
+
+#modal-passos {
+    margin: var(--espaco) 0 0;
+    padding-left: 1.4em;
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-pequeno);
+}
+
+#modal-fechar {
+    display: block;
+    margin: var(--espaco-grande) 0 0 auto;
+    padding: var(--espaco-pequeno) var(--espaco);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-redondo);
+    background: var(--cartao);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+#modal-fechar:hover {
+    border-color: var(--azul);
+    color: var(--azul);
 }

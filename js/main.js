@@ -20,7 +20,11 @@ const CHAVE_REMOVIDAS = "tacho-removidas";
 let removidas = lerLocalStorage(CHAVE_REMOVIDAS, []);
 const btnReporRemovidas = document.querySelector("#repor-removidas");
 const CHAVE_RASCUNHO = "tacho-rascunho";
-
+const modalPreparacao = document.querySelector("#modal-preparacao");
+const modalTitulo = document.querySelector("#modal-titulo");
+const modalPassos = document.querySelector("#modal-passos");
+const btnModalFechar = document.querySelector("#modal-fechar");
+const modalImagem = document.querySelector("#modal-imagem");
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -47,10 +51,7 @@ function criarCartao(receita){
             <p class="cartao-tempo"></p>
             <h4>Ingredientes</h4>
             <ul class="cartao-ingredientes"></ul>
-            <details>
-                <summary>Modo de preparação (${receita.preparacao.length} passos)</summary>
-                <ol class="cartao-passos"></ol>
-            </details>
+            <button class="ver-preparacao" type="button">Ver preparação (${receita.preparacao.length} passos)</button>
             <button class="remover" type="button">Remover receita</button>
         </div>`
     const categoriaReceita = cartao.querySelector(".cartao-categoria");
@@ -90,14 +91,26 @@ function criarCartao(receita){
         listaIngredientes.appendChild(ingredienteLi);
     });
 
-    const listaPassos = cartao.querySelector(".cartao-passos");
+    const botaoPreparacao = cartao.querySelector(".ver-preparacao");
 
+    botaoPreparacao.addEventListener("click", () =>{
+        abrirPreparacao(receita);
+    })
+
+    return cartao;
+}
+
+function abrirPreparacao(receita){
+    modalImagem.src = receita.imagem;
+    modalImagem.alt = receita.nome;
+    modalTitulo.textContent = receita.nome;
+    modalPassos.textContent = "";
     receita.preparacao.forEach(passo => {
         const passoLi = document.createElement("li");
         passoLi.textContent = passo;
-        listaPassos.appendChild(passoLi);       
+        modalPassos.appendChild(passoLi);
     })
-    return cartao;
+    modalPreparacao.showModal();
 }
 
 function removerReceita(receitaRemover){
@@ -264,10 +277,21 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
         mensagemSucesso.hidden = true;
     }, 5000);
 });
+
 btnReporRemovidas.addEventListener("click", () => {
     removidas = [];
     guardarLocalStorage(CHAVE_REMOVIDAS, removidas);
     mostrarReceitas();
+})
+
+btnModalFechar.addEventListener("click", () => {
+    modalPreparacao.close()
+})
+
+modalPreparacao.addEventListener("click", (evento) => {
+    if (evento.target === modalPreparacao){
+        modalPreparacao.close();
+    }
 })
 
 iniciarTema();
