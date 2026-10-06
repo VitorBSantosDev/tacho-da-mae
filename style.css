@@ -68,6 +68,16 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
 body {
     background: var(--fundo);
     color: var(--texto);
@@ -367,8 +377,8 @@ small {
     cursor: pointer;
 }
 
-  footer { 
-    padding-block: 20px 40px; 
+footer { 
+    padding-block: 20px 100px;
     color: var(--suave); 
     font-size: 0.9rem; 
     border-top: 1px solid var(--linha); 
@@ -444,4 +454,46 @@ dialog::backdrop {
 #modal-fechar:hover {
     border-color: var(--azul);
     color: var(--azul);
+}
+
+.atalhos {
+    position: fixed;
+    left: 50%;
+    translate: -50% 0;
+    bottom: var(--espaco);
+    z-index: 10;
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--raio-redondo);
+    background: var(--cartao);
+    border: 1px solid var(--linha);
+    box-shadow: var(--sombra);
+}
+
+.atalhos a {
+    padding: var(--espaco-pequeno) 18px;
+    border-radius: var(--raio-redondo);
+    color: var(--texto);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.atalhos a:hover {
+    background: var(--fundo);
+}
+
+.atalhos .atalho-principal {
+    background: var(--azul);
+    color: var(--cartao);
+}
+
+.atalhos .atalho-principal:hover {
+    background: var(--azul);
+    filter: brightness(1.12);
+}
+
+#adicionar-receita {
+    scroll-margin-top: var(--espaco);
 }
