@@ -23,7 +23,6 @@ export function guardarLocalStorage(chave, valor){
     } catch (erro) {
         console.warn(`Erro: ${erro.message} | ${chave}.`)
     }
-
 }
 
 export function lerLocalStorage(chave, valorDefeito){
@@ -40,6 +39,40 @@ export function lerLocalStorage(chave, valorDefeito){
         
     } catch (erro) {
         return valorDefeito;
+    }
+}
+
+export function guardarSessionStorage(chave, valor) {
+    try {
+        const valorString = JSON.stringify(valor);
+        sessionStorage.setItem(chave, valorString);       
+    } catch (erro) {
+        console.warn(`Erro: ${erro.message} | ${chave}.`)
+    }
+}
+
+export function lerSessionStorage (chave, valorDefeito) {
+    try {
+        const valorGuardado = sessionStorage.getItem(chave);
+
+        if (valorGuardado === null) {
+            return  valorDefeito;
+        }
+
+        const valorTratado = JSON.parse(valorGuardado);
+
+        return valorTratado;
+        
+    } catch (erro) {
+        return valorDefeito;
+    }
+}
+
+export function apagarSessionStorage (chave) {
+    try {
+        sessionStorage.removeItem(chave);
+    } catch (erro) {
+        console.warn(`Erro: ${erro.message} | ${chave}.`)
     }
 }
 
@@ -89,4 +122,3 @@ export function reduzirImagem(ficheiro, largura = 400, altura = 300){
             throw new Error("O ficheiro escolhido não é uma imagem válida.");
         });
 }
-
