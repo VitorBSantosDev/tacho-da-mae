@@ -1,6 +1,6 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, reduzirImagem, guardarSessionStorage, lerSessionStorage, apagarSessionStorage } from './utilitarias.js';
+import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, converterTextoDespensa, separarPorVirgulas, reduzirImagem, guardarSessionStorage, lerSessionStorage, apagarSessionStorage, identificarIngredientesEmFalta } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
 
 const listaReceitas = document.querySelector("#lista-receitas");
@@ -11,6 +11,8 @@ const filtroOrdem = document.querySelector("#ordem");
 const filtroResumo = document.querySelector("#resumo-filtro");
 const favoritos = criarFavoritos();
 const filtroFavorito = document.querySelector("#so-favoritas");
+const filtroDespensa = document.querySelector("#despensa");
+const filtroReceitasPossiveis = document.querySelector("#so-ingredientes-despensa");
 const formAdicionarReceita = document.querySelector("#form-adicionar-receita");
 const listaErros = document.querySelector("#erros");
 const mensagemSucesso = document.querySelector("#mensagem-sucesso");
@@ -18,6 +20,8 @@ let temporizadorSucesso;
 const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
 let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
 const CHAVE_REMOVIDAS = "tacho-removidas";
+const CHAVE_DESPENSA = "tacho-despensa";
+filtroDespensa.value = lerLocalStorage(CHAVE_DESPENSA, "");
 let removidas = lerLocalStorage(CHAVE_REMOVIDAS, []);
 const btnReporRemovidas = document.querySelector("#repor-removidas");
 const CHAVE_RASCUNHO = "tacho-rascunho";
@@ -55,6 +59,7 @@ function criarCartao(receita){
             <p class="cartao-categoria"></p>
             <h3 class="cartao-nome"></h3>
             <p class="cartao-tempo"></p>
+            <p class="cartao-despensa" hidden></p>
             <h4>Ingredientes</h4>
             <ul class="cartao-ingredientes"></ul>
             <button class="ver-preparacao" type="button">Ver preparação (${receita.preparacao.length} passos)</button>
@@ -65,6 +70,7 @@ function criarCartao(receita){
     const tempoReceita = cartao.querySelector(".cartao-tempo");
     const imagemReceita = cartao.querySelector("img");
     const botaoFavorito = cartao.querySelector(".favorito");
+    const etiquetaDespensa = cartao.querySelector(".cartao-despensa");
 
     categoriaReceita.textContent = receita.categoria;
     nomeReceita.textContent = receita.nome;
@@ -80,6 +86,21 @@ function criarCartao(receita){
         favoritos.adicionarOuRemover(receita.id);
         mostrarReceitas();
     })
+
+    const valorDespensa = converterTextoDespensa(filtroDespensa.value);
+
+    if (valorDespensa.length > 0 && (receita.ingredientesBase && receita.ingredientesBase.length !== 0)){
+        const emFalta = identificarIngredientesEmFalta(receita, valorDespensa);
+        if (emFalta.length === 0){
+            etiquetaDespensa.textContent = "✓ Tem tudo o que precisa";
+            etiquetaDespensa.classList.add("cartao-despensa-ok");
+        } else {
+            etiquetaDespensa.textContent = `Falta: ${emFalta.join(", ")}`;
+            etiquetaDespensa.classList.add("cartao-despensa-falta");
+        }
+
+        etiquetaDespensa.hidden = false;
+    }
 
     const btnRemoverReceita = cartao.querySelector(".remover");
 
@@ -174,6 +195,8 @@ function obterReceitasVisiveis(){
     const valorCategoria = filtroCategoria.value;
     const valorOrdem = filtroOrdem.value;
     const valorFavorito = filtroFavorito.checked;
+    const valorDespensa = converterTextoDespensa(filtroDespensa.value);
+    const valorCheckboxDespensa = filtroReceitasPossiveis.checked;
     const receitasCombinadas = [...receitas, ...minhasReceitas];
 
     const receitasFiltradas = receitasCombinadas.filter(receita => {
@@ -188,6 +211,14 @@ function obterReceitasVisiveis(){
         }
         if (valorFavorito && !favoritos.verificarSeEhFavorito(receita.id)){
             return false;
+        }
+        if (valorCheckboxDespensa){
+            if (!receita.ingredientesBase || receita.ingredientesBase.length === 0){
+                return false;
+            }
+            if (identificarIngredientesEmFalta(receita, valorDespensa).length > 0){
+                return false;
+            }
         }
 
         return true;
@@ -214,7 +245,8 @@ function guardarRascunho(){
         nome: formAdicionarReceita.nome.value, 
         categoria: formAdicionarReceita.categoria.value, 
         tempo: formAdicionarReceita.tempo.value, 
-        ingredientes: formAdicionarReceita.ingredientes.value, 
+        ingredientes: formAdicionarReceita.ingredientes.value,
+        ingredientesBase: formAdicionarReceita.ingredientesBase.value,
         preparacao: formAdicionarReceita.preparacao.value
     };
 
@@ -232,6 +264,7 @@ function reporRascunho(){
     formAdicionarReceita.categoria.value = rascunho.categoria;
     formAdicionarReceita.tempo.value = rascunho.tempo;
     formAdicionarReceita.ingredientes.value = rascunho.ingredientes;
+    formAdicionarReceita.ingredientesBase.value = rascunho.ingredientesBase ?? "";
     formAdicionarReceita.preparacao.value = rascunho.preparacao;
 }
 
@@ -250,7 +283,8 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
         categoria: formAdicionarReceita.categoria.value, 
         imagem: "img/sem-imagem.svg", 
         tempo: Number(formAdicionarReceita.tempo.value), 
-        ingredientes: converterTextoParaLista(formAdicionarReceita.ingredientes.value), 
+        ingredientes: converterTextoParaLista(formAdicionarReceita.ingredientes.value),
+        ingredientesBase: separarPorVirgulas(formAdicionarReceita.ingredientesBase.value), 
         preparacao: converterTextoParaLista(formAdicionarReceita.preparacao.value)};
     const erros = validarReceita(receitaNova);
 
@@ -323,6 +357,13 @@ modalConfirmar.addEventListener("click", (evento) => {
         modalConfirmar.close();
     }
 })
+
+filtroDespensa.addEventListener("input", () => {
+    guardarLocalStorage(CHAVE_DESPENSA, filtroDespensa.value);
+    mostrarReceitas();
+})
+
+filtroReceitasPossiveis.addEventListener("change", mostrarReceitas);
 
 iniciarTema();
 iniciarListaReceitas();
