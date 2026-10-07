@@ -24,6 +24,10 @@
         <label for="pesquisa">Pesquisar</label>
         <input id="pesquisa" type="search" placeholder="Ex.: bacalhau" autocomplete="off">
       </div>
+      <div class="campo campo-pesquisa">
+        <label for="despensa">O que tenho em casa</label>
+        <input type="text" id="despensa" placeholder="batata, cebola, alho" autocomplete="off">
+      </div>
       <div class="campo">
         <label for="categoria">Categoria</label>
         <select id="categoria">
@@ -43,6 +47,7 @@
         </select>
       </div>
       <label class="caixa"><input id="so-favoritas" type="checkbox"> Só favoritas</label>
+      <label class="caixa"><input id="so-ingredientes-despensa" type="checkbox"> Só as que consigo fazer</label>
     </section>
 
     <div class="barra-resumo-filtro">
@@ -84,6 +89,11 @@
           <label for="form-ingredientes">Ingredientes</label>
           <textarea id="form-ingredientes" name="ingredientes" placeholder="250 g farinha&#10;4 ovos&#10;Açúcar q.b."></textarea>
           <small>Um ingrediente por linha.</small>
+        </div>
+        <div class="campo largo">
+          <label for="form-ingredientes-base">Ingredientes principais (Opcional)</label>
+          <input type="text" id="form-ingredientes-base" name="ingredientesBase" placeholder="farinha, ovo, açúcar">
+          <small>Separados por vírgulas. Servem para a despensa saber se consegue fazer esta receita.</small>
         </div>
         <div class="campo largo">
           <label for="form-preparacao">Modo de preparação</label>

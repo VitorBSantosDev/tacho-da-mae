@@ -1,3 +1,22 @@
+const INGREDIENTES_BASICOS = ["sal", "pimenta", "agua", "azeite"];
+const SEM_ACENTO = {
+    á: "a", à: "a", â: "a", ã: "a",
+    é: "e", ê: "e",
+    í: "i",
+    ó: "o", ô: "o", õ: "o",
+    ú: "u",
+    ç: "c"
+};
+const REGRAS_PLURAL = [
+    { plural: "oes", singular: "ao" },
+    { plural: "aes", singular: "ao" },
+    { plural: "eis", singular: "el" },
+    { plural: "res", singular: "r" },
+    { plural: "zes", singular: "z" },
+    { plural: "ns",  singular: "m" },
+    { plural: "s",   singular: "" }
+];
+
 export function formatarTempo(minutos){
     const MINUTOS_HORA = 60;
     const horas = Math.floor(minutos / MINUTOS_HORA);
@@ -99,6 +118,14 @@ export function converterTextoParaLista(texto){
     return texto.split("\n").map(linha => linha.trim()).filter(linha => linha !== "");
 }
 
+export function converterTextoDespensa(texto){
+    return texto.split(",").map(ingrediente => normalizarIngrediente(ingrediente)).filter(ingrediente => ingrediente !== "");
+}
+
+export function separarPorVirgulas(texto){
+    return texto.split(",").map(ingrediente => ingrediente.trim()).filter(ingrediente => ingrediente !== "");
+}
+
 export function reduzirImagem(ficheiro, largura = 400, altura = 300){
     return createImageBitmap(ficheiro)
         .then(imagem => {
@@ -121,4 +148,32 @@ export function reduzirImagem(ficheiro, largura = 400, altura = 300){
         .catch(() => {
             throw new Error("O ficheiro escolhido não é uma imagem válida.");
         });
+}
+
+export function tirarAcentos(texto){
+    return texto
+        .split("")
+        .map(letra => SEM_ACENTO[letra] ?? letra)
+        .join("");
+}
+
+export function normalizarIngrediente(texto) {
+    const ingredienteLimpo = limparTexto(texto);
+    const ingredienteSemAcentos = tirarAcentos(ingredienteLimpo);
+
+    for (const regra of REGRAS_PLURAL) {
+        if (ingredienteSemAcentos.endsWith(regra.plural)) {
+            return ingredienteSemAcentos.slice(0, -regra.plural.length) + regra.singular;
+        }
+    }
+
+    return ingredienteSemAcentos;
+}
+
+export function identificarIngredientesEmFalta(receita, despensa){
+    const ingredientesBase = receita.ingredientesBase ?? [];
+    return ingredientesBase.filter(ingrediente => {
+        const ingredienteNormalizado = normalizarIngrediente(ingrediente);
+        return !INGREDIENTES_BASICOS.includes(ingredienteNormalizado) && !despensa.includes(ingredienteNormalizado);
+    });
 }

@@ -10,7 +10,8 @@
     --erro-fundo: #fbe9e7;
     --sucesso: #2e7a3c;
     --sucesso-fundo: #e2f1e4;
-
+    --aviso: #9a5b13;
+    --aviso-fundo: #fbf0dc;
 
     --letra-titulos: "Young Serif", Georgia, serif;
     --letra-texto: "Alegreya Sans", "Segoe UI", sans-serif;
@@ -39,10 +40,10 @@
         --erro-fundo: #3a1c1a;
         --sucesso: #7fcf8c;
         --sucesso-fundo: #1b3322;
-
+        --aviso: #f0b45e;
+        --aviso-fundo: #3a2a12;
 
         --sombra: 0 2px 6px rgb(0 0 0 / 0.5);
-
         color-scheme: dark;
     }
 }
@@ -59,6 +60,9 @@
     --erro-fundo: #3a1c1a;
     --sucesso: #7fcf8c;
     --sucesso-fundo: #1b3322;
+    --aviso: #f0b45e;
+    --aviso-fundo: #3a2a12;
+
 
     --sombra: 0 2px 6px rgb(0 0 0 / 0.5);
     color-scheme: dark;
@@ -279,6 +283,26 @@ input, select, textarea {
     margin: 0 0 6px; 
     font-weight: 700; 
     color: var(--dourado); 
+}
+
+.cartao-despensa {
+    align-self: flex-start;
+    margin: 0 0 6px;
+    padding: 4px 12px;
+    border-radius: var(--raio-redondo);
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.cartao-despensa-ok {
+    background: var(--sucesso-fundo);
+    color: var(--sucesso);
+}
+
+.cartao-despensa-falta {
+    background: var(--aviso-fundo);
+    color: var(--aviso);
 }
 
 .cartao h4 { 
