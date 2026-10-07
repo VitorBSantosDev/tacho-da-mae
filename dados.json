@@ -15,6 +15,9 @@
       "Azeitonas pretas e salsa picada q.b.",
       "Sal e pimenta q.b."
     ],
+    "ingredientesBase": [
+      "bacalhau", "batata palha", "cebola", "alho", "ovo"
+    ],
     "preparacao": [
       "Aqueça o azeite num tacho largo e aloure a cebola e o alho em lume brando.",
       "Junte o bacalhau desfiado e deixe cozinhar 5 minutos, mexendo sempre.",
@@ -38,6 +41,9 @@
       "0,5 dl azeite",
       "1,5 l água",
       "Sal q.b."
+    ],
+    "ingredientesBase": [
+      "batata", "cebola", "alho", "couve", "chouriço"
     ],
     "preparacao": [
       "Coza as batatas, a cebola e o alho na água com sal durante 20 minutos.",
@@ -63,6 +69,9 @@
       "1 pitada de sal",
       "Canela em pó para decorar q.b."
     ],
+    "ingredientesBase": [
+      "arroz", "leite", "açúcar", "ovo", "limão", "canela"
+    ],
     "preparacao": [
       "Coza o arroz na água com o sal e a casca de limão até a água ser absorvida.",
       "Aqueça o leite com o pau de canela e vá juntando ao arroz aos poucos, mexendo sempre.",
@@ -86,6 +95,9 @@
       "1 dl água",
       "1 pau de canela",
       "1 casca de limão"
+    ],
+    "ingredientesBase": [
+      "massa folhada", "leite", "açúcar", "farinha", "ovo", "limão", "canela"
     ],
     "preparacao": [
       "Enrole a massa folhada, corte em rodelas de 2 cm e forre as formas com os polegares molhados.",
@@ -113,6 +125,9 @@
       "1 cálice de vinho do Porto",
       "1 colher de sopa de maisena"
     ],
+    "ingredientesBase": [
+      "pão de forma", "bife", "salsicha", "linguiça", "fiambre", "queijo", "cerveja", "tomate", "vinho do porto", "maisena"
+    ],
     "preparacao": [
       "Para o molho, ferva a cerveja, a polpa de tomate e o vinho do Porto durante 15 minutos e engrosse com a maisena dissolvida em água.",
       "Grelhe os bifes, as salsichas abertas ao meio e a linguiça.",
@@ -137,6 +152,9 @@
       "1 limão (sumo)",
       "2 colheres de sopa de azeite",
       "Sal q.b."
+    ],
+    "ingredientesBase": [
+      "pato", "arroz", "chouriço", "bacon", "cebola", "cenoura", "limão"
     ],
     "preparacao": [
       "Coza o pato com a cebola, a cenoura e metade do chouriço em água temperada com sal, durante cerca de 1 hora.",
