@@ -35,6 +35,9 @@ const confirmarTexto = document.querySelector("#confirmar-texto");
 const btnConfirmarCancelar = document.querySelector("#confirmar-cancelar");
 const btnConfirmarSim = document.querySelector("#confirmar-sim");
 let receitaPorRemover = null;
+const btnExportarReceita = document.querySelector("#exportar-receitas");
+const inputImportarReceita = document.querySelector("#importar-receitas");
+const mensagemCopia = document.querySelector("#mensagem-copia");
 
 async function iniciarListaReceitas(){
     listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
@@ -268,6 +271,69 @@ function reporRascunho(){
     formAdicionarReceita.preparacao.value = rascunho.preparacao;
 }
 
+function mostrarMensagemCopia(texto){
+    mensagemCopia.textContent = texto;
+    mensagemCopia.hidden = false;
+}
+
+function exportarReceitas(){
+    if (minhasReceitas.length === 0){
+        mostrarMensagemCopia("Ainda não criou nenhuma receita para exportar");
+        return;
+    }
+
+    const receitasExportar = JSON.stringify(minhasReceitas, null, 2);
+    const ficheiro = new Blob([receitasExportar], {type: "application/json"});
+    const endereco = URL.createObjectURL(ficheiro);
+
+    const referencia = document.createElement("a");
+    referencia.href = endereco;
+    referencia.download = "tacho-da-mae.json";
+
+    referencia.click();
+    URL.revokeObjectURL(endereco);
+    const mensagemExportacao = minhasReceitas.length !== 1 ? `Foram exportadas ${minhasReceitas.length} receitas.` : `Foi exportada ${minhasReceitas.length} receita.`;
+    mostrarMensagemCopia(mensagemExportacao);
+}
+
+async function importarReceita(){
+    const ficheiroImportado = inputImportarReceita.files[0];
+
+    if (!ficheiroImportado){
+        return;
+    }
+
+    try {
+        const ficheiroTexto = await ficheiroImportado.text();
+        const receitasImportadas = JSON.parse(ficheiroTexto);
+
+        if (!Array.isArray(receitasImportadas)){
+            throw new Error("O ficheiro não tem uma lista de receitas.");
+        }
+        const receitasValidas = receitasImportadas.filter(receitaImportada => {
+            return receitaImportada.id &&
+            receitaImportada.id.startsWith("minha-") && 
+            validarReceita(receitaImportada).length === 0 && 
+            !minhasReceitas.some(receita => receita.id === receitaImportada.id)});
+        
+        minhasReceitas = [...minhasReceitas, ...receitasValidas];
+        guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
+        mostrarReceitas();
+
+        const quantidadeImportadas = receitasValidas.length;
+        const quantidadeIgnoradas = receitasImportadas.length - receitasValidas.length;
+        const palavraImportadas = quantidadeImportadas === 1 ? "receita importada" : "receitas importadas";
+        const mensagemImportacao = `${quantidadeImportadas} ${palavraImportadas}.${quantidadeIgnoradas > 0 ? ` ${quantidadeIgnoradas} foram ignoradas (repetidas ou inválidas).` : ""}`;
+
+        mostrarMensagemCopia(mensagemImportacao);
+    
+    } catch (erro) {
+        mostrarMensagemCopia("Não foi possível importar. Confirme que o ficheiro é uma exportação do Tacho da Mãe");
+    }
+
+    inputImportarReceita.value = "";
+}
+
 filtroFavorito.addEventListener("change", mostrarReceitas);
 filtroPesquisa.addEventListener("input", mostrarReceitas);
 filtroCategoria.addEventListener("change", mostrarReceitas);
@@ -364,6 +430,10 @@ filtroDespensa.addEventListener("input", () => {
 })
 
 filtroReceitasPossiveis.addEventListener("change", mostrarReceitas);
+
+btnExportarReceita.addEventListener("click", exportarReceitas);
+
+inputImportarReceita.addEventListener("change", importarReceita);
 
 iniciarTema();
 iniciarListaReceitas();
