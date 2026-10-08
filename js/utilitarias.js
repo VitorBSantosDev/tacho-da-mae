@@ -16,9 +16,11 @@ const REGRAS_PLURAL = [
     { plural: "ns",  singular: "m" },
     { plural: "s",   singular: "" }
 ];
+const MIN_LETRAS_NOME = 3;
+const QUALIDADE_JPEG = 0.7;
+const MINUTOS_HORA = 60;
 
 export function formatarTempo(minutos){
-    const MINUTOS_HORA = 60;
     const horas = Math.floor(minutos / MINUTOS_HORA);
     const minutosRestantes = minutos % MINUTOS_HORA;
 
@@ -98,8 +100,8 @@ export function apagarSessionStorage (chave) {
 export function validarReceita(receita){
     const listaErros = [];
 
-    if (receita.nome.length < 3){
-        listaErros.push("O nome precisa de pelo menos 3 letras.");
+    if (receita.nome.length < MIN_LETRAS_NOME){
+        listaErros.push(`O nome precisa de pelo menos ${MIN_LETRAS_NOME} letras.`);
     }
     if (isNaN(receita.tempo) || receita.tempo <= 0){
         listaErros.push("O tempo tem de ser um número maior que 0.");
@@ -143,7 +145,7 @@ export function reduzirImagem(ficheiro, largura = 400, altura = 300){
             const contexto = tela.getContext("2d");
             contexto.drawImage(imagem, x, y, novaLargura, novaAltura);
 
-            return tela.toDataURL("image/jpeg", 0.7);
+            return tela.toDataURL("image/jpeg", QUALIDADE_JPEG);
         })
         .catch(() => {
             throw new Error("O ficheiro escolhido não é uma imagem válida.");
