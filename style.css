@@ -392,11 +392,30 @@ small {
     cursor: pointer;
 }
 
-footer { 
-    padding-block: 20px 100px;
-    color: var(--suave); 
-    font-size: 0.9rem; 
-    border-top: 1px solid var(--linha); 
+footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--espaco-pequeno) var(--espaco);
+    padding-block: 20px 80px;
+    color: var(--suave);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--linha);
+}
+
+footer p {
+    margin: 0;
+}
+
+.footer-copyright strong {
+    color: var(--texto);
+}
+
+.footer-links a {
+    color: var(--azul);
+    font-weight: 500;
+    text-decoration: none;
 }
 
 .ver-preparacao {
@@ -578,6 +597,10 @@ input[type="file"]::file-selector-button {
 }
 
 @media (hover: hover) {
+    .footer-links a:hover {
+        text-decoration: underline;
+    }
+
     .botao-tema:hover { 
         border-color: var(--azul); 
         color: var(--azul); 
