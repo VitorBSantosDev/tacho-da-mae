@@ -15,7 +15,7 @@ export function criarFavoritos(){
         guardarLocalStorage(CHAVE_FAVORITOS, listaFavoritos);
     }
 
-    function verificarSeEhFavorito(id){
+    function verificarSeEFavorito(id){
         return listaFavoritos.includes(id);
     }
 
@@ -23,5 +23,5 @@ export function criarFavoritos(){
         return listaFavoritos.length;
     }
 
-    return {adicionarOuRemover, verificarSeEhFavorito, contarFavoritos}
+    return {adicionarOuRemover, verificarSeEFavorito: verificarSeEFavorito, contarFavoritos}
 }
