@@ -546,6 +546,37 @@ input[type="file"]::file-selector-button {
     cursor: pointer;
 }
 
+.copia-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--espaco);
+}
+
+.copia-acoes label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#exportar-receitas {
+    padding: var(--espaco-pequeno) var(--espaco);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-redondo);
+    background: var(--cartao);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#mensagem-copia {
+    margin: var(--espaco) 0 0;
+    padding: 12px 16px;
+    border-radius: var(--raio-pequeno);
+    background: var(--sucesso-fundo);
+    color: var(--sucesso);
+    font-weight: 500;
+}
+
 @media (hover: hover) {
     .botao-tema:hover { 
         border-color: var(--azul); 
@@ -581,6 +612,11 @@ input[type="file"]::file-selector-button {
 
     #confirmar-sim:hover {
         filter: brightness(1.1);
+    }
+
+    #exportar-receitas:hover {
+        border-color: var(--azul);
+        color: var(--azul);
     }
 }
 
