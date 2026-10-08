@@ -1,6 +1,6 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, converterTextoDespensa, separarPorVirgulas, reduzirImagem, guardarSessionStorage, lerSessionStorage, apagarSessionStorage, identificarIngredientesEmFalta } from './utilitarias.js';
+import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, converterTextoDespensa, separarPorVirgulas, reduzirImagem, guardarSessionStorage, lerSessionStorage, apagarSessionStorage, identificarIngredientesEmFalta, verificarTemIngredientesBase } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
 
 const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
@@ -96,7 +96,7 @@ function criarCartao(receita){
 
     const ingredientesDespensa = converterTextoDespensa(filtroDespensa.value);
 
-    if (ingredientesDespensa.length > 0 && (receita.ingredientesBase && receita.ingredientesBase.length !== 0)){
+    if (ingredientesDespensa.length > 0 && verificarTemIngredientesBase(receita)){
         const emFalta = identificarIngredientesEmFalta(receita, ingredientesDespensa);
         if (emFalta.length === 0){
             etiquetaDespensa.textContent = "✓ Tem tudo o que precisa";
@@ -226,7 +226,7 @@ function obterReceitasVisiveis(){
             return false;
         }
         if (apenasReceitasPossiveis){
-            if (!receita.ingredientesBase || receita.ingredientesBase.length === 0){
+            if (!verificarTemIngredientesBase(receita)){
                 return false;
             }
             if (identificarIngredientesEmFalta(receita, ingredientesDespensa).length > 0){
