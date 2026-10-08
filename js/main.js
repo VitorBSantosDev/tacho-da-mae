@@ -3,6 +3,14 @@ import { carregarReceitas } from './api.js';
 import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, converterTextoDespensa, separarPorVirgulas, reduzirImagem, guardarSessionStorage, lerSessionStorage, apagarSessionStorage, identificarIngredientesEmFalta } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
 
+const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
+const CHAVE_REMOVIDAS = "tacho-removidas";
+const CHAVE_DESPENSA = "tacho-despensa";
+const CHAVE_RASCUNHO = "tacho-rascunho";
+const PREFIXO_RECEITA_PROPRIA = "minha-";
+const TODAS_CATEGORIAS = "Todas";
+const IMAGEM_PADRAO = "img/sem-imagem.svg";
+const DURACAO_MENSAGEM_MS = 5000;
 const listaReceitas = document.querySelector("#lista-receitas");
 let receitas = [];
 const filtroPesquisa = document.querySelector("#pesquisa");
@@ -17,14 +25,10 @@ const formAdicionarReceita = document.querySelector("#form-adicionar-receita");
 const listaErros = document.querySelector("#erros");
 const mensagemSucesso = document.querySelector("#mensagem-sucesso");
 let temporizadorSucesso;
-const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
 let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
-const CHAVE_REMOVIDAS = "tacho-removidas";
-const CHAVE_DESPENSA = "tacho-despensa";
 filtroDespensa.value = lerLocalStorage(CHAVE_DESPENSA, "");
 let removidas = lerLocalStorage(CHAVE_REMOVIDAS, []);
 const btnReporRemovidas = document.querySelector("#repor-removidas");
-const CHAVE_RASCUNHO = "tacho-rascunho";
 const modalPreparacao = document.querySelector("#modal-preparacao");
 const modalTitulo = document.querySelector("#modal-titulo");
 const modalPassos = document.querySelector("#modal-passos");
@@ -148,7 +152,7 @@ function pedirConfirmacaoRemover(receita){
 }
 
 function removerReceita(receitaRemover){
-    if (receitaRemover.id.startsWith("minha-")){
+    if (receitaRemover.id.startsWith(PREFIXO_RECEITA_PROPRIA)){
         minhasReceitas = minhasReceitas.filter(receita => receita.id !== receitaRemover.id);
         guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
     } else{
@@ -209,7 +213,7 @@ function obterReceitasVisiveis(){
         if (!limparTexto(receita.nome).includes(valorPesquisa)){
             return false;
         }
-        if (valorCategoria !== "Todas" && receita.categoria !== valorCategoria){
+        if (valorCategoria !== TODAS_CATEGORIAS && receita.categoria !== valorCategoria){
             return false;
         }
         if (valorFavorito && !favoritos.verificarSeEhFavorito(receita.id)){
@@ -312,7 +316,7 @@ async function importarReceita(){
         }
         const receitasValidas = receitasImportadas.filter(receitaImportada => {
             return receitaImportada.id &&
-            receitaImportada.id.startsWith("minha-") && 
+            receitaImportada.id.startsWith(PREFIXO_RECEITA_PROPRIA) && 
             validarReceita(receitaImportada).length === 0 && 
             !minhasReceitas.some(receita => receita.id === receitaImportada.id)});
         
@@ -323,7 +327,8 @@ async function importarReceita(){
         const quantidadeImportadas = receitasValidas.length;
         const quantidadeIgnoradas = receitasImportadas.length - receitasValidas.length;
         const palavraImportadas = quantidadeImportadas === 1 ? "receita importada" : "receitas importadas";
-        const mensagemImportacao = `${quantidadeImportadas} ${palavraImportadas}.${quantidadeIgnoradas > 0 ? ` ${quantidadeIgnoradas} foram ignoradas (repetidas ou inválidas).` : ""}`;
+        const fraseIgnoradas = quantidadeIgnoradas === 1 ? "foi ignorada (repetida ou inválida)" : "foram ignoradas (repetidas ou inválidas)";
+        const mensagemImportacao = `${quantidadeImportadas} ${palavraImportadas}.${quantidadeIgnoradas > 0 ? ` ${quantidadeIgnoradas} ${fraseIgnoradas}.` : ""}`;
 
         mostrarMensagemCopia(mensagemImportacao);
     
@@ -344,10 +349,10 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     
     const receitaNova = {
-        id: `minha-${Date.now()}`, 
+        id: `${PREFIXO_RECEITA_PROPRIA}${Date.now()}`, 
         nome: formAdicionarReceita.nome.value.trim(), 
         categoria: formAdicionarReceita.categoria.value, 
-        imagem: "img/sem-imagem.svg", 
+        imagem: IMAGEM_PADRAO, 
         tempo: Number(formAdicionarReceita.tempo.value), 
         ingredientes: converterTextoParaLista(formAdicionarReceita.ingredientes.value),
         ingredientesBase: separarPorVirgulas(formAdicionarReceita.ingredientesBase.value), 
@@ -389,7 +394,7 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
     clearTimeout(temporizadorSucesso);
     temporizadorSucesso = setTimeout(() => {
         mensagemSucesso.hidden = true;
-    }, 5000);
+    }, DURACAO_MENSAGEM_MS);
 });
 
 btnReporRemovidas.addEventListener("click", () => {
