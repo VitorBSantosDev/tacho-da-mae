@@ -167,7 +167,7 @@ function removerReceita(receitaRemover){
     if (favoritos.verificarSeEFavorito(receitaRemover.id)){
         favoritos.adicionarOuRemover(receitaRemover.id);
     }
-    
+
     mostrarReceitas();
 }
 
@@ -286,6 +286,21 @@ function mostrarMensagemCopia(texto){
     mensagemCopia.hidden = false;
 }
 
+function mostrarErros(listaMensagens){
+    caixaErros.innerHTML = listaMensagens.map(mensagem => `<li>${mensagem}</li>`).join("");
+    caixaErros.hidden = false;
+    mensagemSucesso.hidden = true;
+    clearTimeout(temporizadorSucesso);
+}
+
+function fecharAoClicarFora(dialog){
+    dialog.addEventListener("click", (evento) => {
+        if (evento.target === dialog){
+            dialog.close();
+        }
+    });
+}
+
 function exportarReceitas(){
     if (minhasReceitas.length === 0){
         mostrarMensagemCopia("Ainda não criou nenhuma receita para exportar");
@@ -366,10 +381,7 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
     const erros = validarReceita(receitaNova);
 
     if (erros.length > 0){
-        caixaErros.innerHTML = erros.map(erro => `<li>${erro}</li>`).join("");
-        caixaErros.hidden = false;
-        mensagemSucesso.hidden = true;
-        clearTimeout(temporizadorSucesso);
+        mostrarErros(erros);
         return;
     }
 
@@ -379,10 +391,7 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
         try {
             receitaNova.imagem = await reduzirImagem(ficheiro);
         } catch (erro) {
-            caixaErros.innerHTML = `<li>${erro.message}</li>`;
-            caixaErros.hidden = false;
-            mensagemSucesso.hidden = true;
-            clearTimeout(temporizadorSucesso);
+            mostrarErros([erro.message]);
             return;
         }
     }
@@ -413,11 +422,7 @@ botaoModalFechar.addEventListener("click", () => {
     modalPreparacao.close()
 })
 
-modalPreparacao.addEventListener("click", (evento) => {
-    if (evento.target === modalPreparacao){
-        modalPreparacao.close();
-    }
-})
+fecharAoClicarFora(modalPreparacao);
 
 botaoConfirmarCancelar.addEventListener("click", () => {
     modalConfirmar.close();
@@ -429,11 +434,7 @@ botaoConfirmarSim.addEventListener("click", () => {
     modalConfirmar.close();
 })
 
-modalConfirmar.addEventListener("click", (evento) => {
-    if (evento.target === modalConfirmar){
-        modalConfirmar.close();
-    }
-})
+fecharAoClicarFora(modalConfirmar);
 
 filtroDespensa.addEventListener("input", () => {
     guardarLocalStorage(CHAVE_DESPENSA, filtroDespensa.value);
