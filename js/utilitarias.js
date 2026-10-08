@@ -116,16 +116,20 @@ export function validarReceita(receita){
     return listaErros;
 }
 
-export function converterTextoParaLista(texto){
-    return texto.split("\n").map(linha => linha.trim()).filter(linha => linha !== "");
+export function separarTexto(texto, separador){
+    return texto.split(separador).map(parte => parte.trim()).filter(parte => parte !== "");
 }
 
-export function converterTextoDespensa(texto){
-    return texto.split(",").map(ingrediente => normalizarIngrediente(ingrediente)).filter(ingrediente => ingrediente !== "");
+export function converterTextoParaLista(texto){
+    return separarTexto(texto, "\n");
 }
 
 export function separarPorVirgulas(texto){
-    return texto.split(",").map(ingrediente => ingrediente.trim()).filter(ingrediente => ingrediente !== "");
+    return separarTexto(texto, ",");
+}
+
+export function converterTextoDespensa(texto){
+    return separarPorVirgulas(texto).map(ingrediente => normalizarIngrediente(ingrediente));
 }
 
 export function reduzirImagem(ficheiro, largura = 400, altura = 300){
@@ -170,6 +174,10 @@ export function normalizarIngrediente(texto) {
     }
 
     return ingredienteSemAcentos;
+}
+
+export function verificarTemIngredientesBase(receita){
+    return Boolean(receita.ingredientesBase) && receita.ingredientesBase.length > 0;
 }
 
 export function identificarIngredientesEmFalta(receita, despensa){
