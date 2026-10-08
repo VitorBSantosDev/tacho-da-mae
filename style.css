@@ -1,8 +1,8 @@
 :root {
     --fundo: #f4f5f1;
-    --cartao: #ffffff;        /* fundo dos cartões, inputs e formulário */
-    --texto: #1c2231;         /* texto principal */
-    --suave: #5b6275;         /* texto secundário (legendas, categorias) */
+    --cartao: #ffffff;
+    --texto: #1c2231;
+    --suave: #5b6275;     
     --linha: #dfe2e6;
     --azul: #2346a0;
     --dourado: #a8740c;
@@ -16,9 +16,9 @@
     --letra-titulos: "Young Serif", Georgia, serif;
     --letra-texto: "Alegreya Sans", "Segoe UI", sans-serif;
 
-    --raio-pequeno: 8px;      /* inputs, selects, caixa de erros */
-    --raio: 12px;             /* cartões */
-    --raio-redondo: 999px;    /* botões em forma de pílula */
+    --raio-pequeno: 8px; 
+    --raio: 12px;
+    --raio-redondo: 999px;
 
     --espaco-pequeno: 8px;
     --espaco: 16px;
@@ -533,6 +533,17 @@ dialog::backdrop {
     border: none;
     background: var(--erro);
     color: var(--cartao);
+}
+
+select,
+input,
+textarea,
+.caixa {
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    cursor: pointer;
 }
 
 @media (hover: hover) {
