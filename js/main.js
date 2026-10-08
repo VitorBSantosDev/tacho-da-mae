@@ -16,30 +16,30 @@ let receitas = [];
 const filtroPesquisa = document.querySelector("#pesquisa");
 const filtroCategoria = document.querySelector("#categoria");
 const filtroOrdem = document.querySelector("#ordem");
-const filtroResumo = document.querySelector("#resumo-filtro");
+const elementoResumo = document.querySelector("#resumo-filtro");
 const favoritos = criarFavoritos();
 const filtroFavorito = document.querySelector("#so-favoritas");
 const filtroDespensa = document.querySelector("#despensa");
 const filtroReceitasPossiveis = document.querySelector("#so-ingredientes-despensa");
 const formAdicionarReceita = document.querySelector("#form-adicionar-receita");
-const listaErros = document.querySelector("#erros");
+const caixaErros = document.querySelector("#erros");
 const mensagemSucesso = document.querySelector("#mensagem-sucesso");
 let temporizadorSucesso;
 let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
 filtroDespensa.value = lerLocalStorage(CHAVE_DESPENSA, "");
 let removidas = lerLocalStorage(CHAVE_REMOVIDAS, []);
-const btnReporRemovidas = document.querySelector("#repor-removidas");
+const botaoReporRemovidas = document.querySelector("#repor-removidas");
 const modalPreparacao = document.querySelector("#modal-preparacao");
 const modalTitulo = document.querySelector("#modal-titulo");
 const modalPassos = document.querySelector("#modal-passos");
-const btnModalFechar = document.querySelector("#modal-fechar");
+const botaoModalFechar = document.querySelector("#modal-fechar");
 const modalImagem = document.querySelector("#modal-imagem");
 const modalConfirmar = document.querySelector("#modal-confirmar");
 const confirmarTexto = document.querySelector("#confirmar-texto");
-const btnConfirmarCancelar = document.querySelector("#confirmar-cancelar");
-const btnConfirmarSim = document.querySelector("#confirmar-sim");
+const botaoConfirmarCancelar = document.querySelector("#confirmar-cancelar");
+const botaoConfirmarSim = document.querySelector("#confirmar-sim");
 let receitaPorRemover = null;
-const btnExportarReceita = document.querySelector("#exportar-receitas");
+const botaoExportarReceitas = document.querySelector("#exportar-receitas");
 const inputImportarReceita = document.querySelector("#importar-receitas");
 const mensagemCopia = document.querySelector("#mensagem-copia");
 
@@ -84,20 +84,20 @@ function criarCartao(receita){
     tempoReceita.textContent = `⏱ ${formatarTempo(receita.tempo)}`
     imagemReceita.alt = receita.nome;
 
-    const ehFavorito = favoritos.verificarSeEhFavorito(receita.id);
+    const eFavorito = favoritos.verificarSeEFavorito(receita.id);
 
-    botaoFavorito.textContent = ehFavorito ? "♥" : "♡";
-    botaoFavorito.setAttribute("aria-label", ehFavorito ? "Tirar dos favoritos" : "Adicionar aos favoritos");
+    botaoFavorito.textContent = eFavorito ? "♥" : "♡";
+    botaoFavorito.setAttribute("aria-label", eFavorito ? "Tirar dos favoritos" : "Adicionar aos favoritos");
 
     botaoFavorito.addEventListener("click", () => {
         favoritos.adicionarOuRemover(receita.id);
         mostrarReceitas();
     })
 
-    const valorDespensa = converterTextoDespensa(filtroDespensa.value);
+    const ingredientesDespensa = converterTextoDespensa(filtroDespensa.value);
 
-    if (valorDespensa.length > 0 && (receita.ingredientesBase && receita.ingredientesBase.length !== 0)){
-        const emFalta = identificarIngredientesEmFalta(receita, valorDespensa);
+    if (ingredientesDespensa.length > 0 && (receita.ingredientesBase && receita.ingredientesBase.length !== 0)){
+        const emFalta = identificarIngredientesEmFalta(receita, ingredientesDespensa);
         if (emFalta.length === 0){
             etiquetaDespensa.textContent = "✓ Tem tudo o que precisa";
             etiquetaDespensa.classList.add("cartao-despensa-ok");
@@ -109,9 +109,9 @@ function criarCartao(receita){
         etiquetaDespensa.hidden = false;
     }
 
-    const btnRemoverReceita = cartao.querySelector(".remover");
+    const botaoRemoverReceita = cartao.querySelector(".remover");
 
-    btnRemoverReceita.addEventListener("click", () => {
+    botaoRemoverReceita.addEventListener("click", () => {
         pedirConfirmacaoRemover(receita);
     })
 
@@ -152,6 +152,10 @@ function pedirConfirmacaoRemover(receita){
 }
 
 function removerReceita(receitaRemover){
+    if (!receitaRemover){
+        return;
+    }
+
     if (receitaRemover.id.startsWith(PREFIXO_RECEITA_PROPRIA)){
         minhasReceitas = minhasReceitas.filter(receita => receita.id !== receitaRemover.id);
         guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
@@ -159,9 +163,11 @@ function removerReceita(receitaRemover){
         removidas = [...removidas, receitaRemover.id];
         guardarLocalStorage(CHAVE_REMOVIDAS, removidas);
     }
-    if (favoritos.verificarSeEhFavorito(receitaRemover.id)){
+
+    if (favoritos.verificarSeEFavorito(receitaRemover.id)){
         favoritos.adicionarOuRemover(receitaRemover.id);
     }
+    
     mostrarReceitas();
 }
 
@@ -177,15 +183,15 @@ function mostrarReceitas(){
         }
     }
     mostrarResumoFiltro(receitasVisiveis);
-    btnReporRemovidas.hidden = removidas.length === 0;
-    btnReporRemovidas.textContent = `Repor receitas removidas (${removidas.length})`
+    botaoReporRemovidas.hidden = removidas.length === 0;
+    botaoReporRemovidas.textContent = `Repor receitas removidas (${removidas.length})`
 }
 
 function mostrarResumoFiltro(receitasVisiveis){
     const quantidade = receitasVisiveis.length;
 
     if (quantidade === 0){
-        filtroResumo.textContent = "0 receitas";
+        elementoResumo.textContent = "0 receitas";
         return;
     }
 
@@ -194,16 +200,16 @@ function mostrarResumoFiltro(receitasVisiveis){
     const palavraReceita = quantidade === 1 ? "receita" : "receitas";
     const palavraFavorito = favoritos.contarFavoritos() === 1 ? "favorita" : "favoritas"
 
-    filtroResumo.textContent = `${quantidade} ${palavraReceita} · tempo médio ${mediaTempo} · ${favoritos.contarFavoritos()} ${palavraFavorito}`;
+    elementoResumo.textContent = `${quantidade} ${palavraReceita} · tempo médio ${mediaTempo} · ${favoritos.contarFavoritos()} ${palavraFavorito}`;
 }
 
 function obterReceitasVisiveis(){
     const valorPesquisa = limparTexto(filtroPesquisa.value);
     const valorCategoria = filtroCategoria.value;
     const valorOrdem = filtroOrdem.value;
-    const valorFavorito = filtroFavorito.checked;
-    const valorDespensa = converterTextoDespensa(filtroDespensa.value);
-    const valorCheckboxDespensa = filtroReceitasPossiveis.checked;
+    const apenasReceitasFavoritas = filtroFavorito.checked;
+    const ingredientesDespensa = converterTextoDespensa(filtroDespensa.value);
+    const apenasReceitasPossiveis = filtroReceitasPossiveis.checked;
     const receitasCombinadas = [...receitas, ...minhasReceitas];
 
     const receitasFiltradas = receitasCombinadas.filter(receita => {
@@ -216,14 +222,14 @@ function obterReceitasVisiveis(){
         if (valorCategoria !== TODAS_CATEGORIAS && receita.categoria !== valorCategoria){
             return false;
         }
-        if (valorFavorito && !favoritos.verificarSeEhFavorito(receita.id)){
+        if (apenasReceitasFavoritas && !favoritos.verificarSeEFavorito(receita.id)){
             return false;
         }
-        if (valorCheckboxDespensa){
+        if (apenasReceitasPossiveis){
             if (!receita.ingredientesBase || receita.ingredientesBase.length === 0){
                 return false;
             }
-            if (identificarIngredientesEmFalta(receita, valorDespensa).length > 0){
+            if (identificarIngredientesEmFalta(receita, ingredientesDespensa).length > 0){
                 return false;
             }
         }
@@ -290,17 +296,17 @@ function exportarReceitas(){
     const ficheiro = new Blob([receitasExportar], {type: "application/json"});
     const endereco = URL.createObjectURL(ficheiro);
 
-    const referencia = document.createElement("a");
-    referencia.href = endereco;
-    referencia.download = "tacho-da-mae.json";
+    const linkDownload = document.createElement("a");
+    linkDownload.href = endereco;
+    linkDownload.download = "tacho-da-mae.json";
 
-    referencia.click();
+    linkDownload.click();
     URL.revokeObjectURL(endereco);
     const mensagemExportacao = minhasReceitas.length !== 1 ? `Foram exportadas ${minhasReceitas.length} receitas.` : `Foi exportada ${minhasReceitas.length} receita.`;
     mostrarMensagemCopia(mensagemExportacao);
 }
 
-async function importarReceita(){
+async function importarReceitas(){
     const ficheiroImportado = inputImportarReceita.files[0];
 
     if (!ficheiroImportado){
@@ -360,8 +366,8 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
     const erros = validarReceita(receitaNova);
 
     if (erros.length > 0){
-        listaErros.innerHTML = erros.map(erro => `<li>${erro}</li>`).join("");
-        listaErros.hidden = false;
+        caixaErros.innerHTML = erros.map(erro => `<li>${erro}</li>`).join("");
+        caixaErros.hidden = false;
         mensagemSucesso.hidden = true;
         clearTimeout(temporizadorSucesso);
         return;
@@ -373,15 +379,15 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
         try {
             receitaNova.imagem = await reduzirImagem(ficheiro);
         } catch (erro) {
-            listaErros.innerHTML = `<li>${erro.message}</li>`;
-            listaErros.hidden = false;
+            caixaErros.innerHTML = `<li>${erro.message}</li>`;
+            caixaErros.hidden = false;
             mensagemSucesso.hidden = true;
             clearTimeout(temporizadorSucesso);
             return;
         }
     }
 
-    listaErros.hidden = true;
+    caixaErros.hidden = true;
     minhasReceitas = [...minhasReceitas, receitaNova];
     guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
     formAdicionarReceita.reset();
@@ -397,13 +403,13 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
     }, DURACAO_MENSAGEM_MS);
 });
 
-btnReporRemovidas.addEventListener("click", () => {
+botaoReporRemovidas.addEventListener("click", () => {
     removidas = [];
     guardarLocalStorage(CHAVE_REMOVIDAS, removidas);
     mostrarReceitas();
 })
 
-btnModalFechar.addEventListener("click", () => {
+botaoModalFechar.addEventListener("click", () => {
     modalPreparacao.close()
 })
 
@@ -413,11 +419,11 @@ modalPreparacao.addEventListener("click", (evento) => {
     }
 })
 
-btnConfirmarCancelar.addEventListener("click", () => {
+botaoConfirmarCancelar.addEventListener("click", () => {
     modalConfirmar.close();
 })
 
-btnConfirmarSim.addEventListener("click", () => {
+botaoConfirmarSim.addEventListener("click", () => {
     removerReceita(receitaPorRemover);
     receitaPorRemover = null;
     modalConfirmar.close();
@@ -436,9 +442,9 @@ filtroDespensa.addEventListener("input", () => {
 
 filtroReceitasPossiveis.addEventListener("change", mostrarReceitas);
 
-btnExportarReceita.addEventListener("click", exportarReceitas);
+botaoExportarReceitas.addEventListener("click", exportarReceitas);
 
-inputImportarReceita.addEventListener("change", importarReceita);
+inputImportarReceita.addEventListener("change", importarReceitas);
 
 iniciarTema();
 iniciarListaReceitas();
