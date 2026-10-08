@@ -4,7 +4,7 @@ export function iniciarTema() {
     const botaoTema = document.querySelector('#tema');
     const html = document.documentElement;
 
-    function temaAtual() {
+    function obterTemaAtual() {
         if (html.dataset.theme) {
             return html.dataset.theme;
         }
@@ -17,10 +17,10 @@ export function iniciarTema() {
     }
 
     const guardado = localStorage.getItem(CHAVE_TEMA);
-    aplicarTema(guardado || temaAtual());
+    aplicarTema(guardado || obterTemaAtual());
 
     botaoTema.addEventListener('click', () => {
-        const novoTema = temaAtual() === 'dark' ? 'light' : 'dark';
+        const novoTema = obterTemaAtual() === 'dark' ? 'light' : 'dark';
         aplicarTema(novoTema);
         localStorage.setItem(CHAVE_TEMA, novoTema);
     });
