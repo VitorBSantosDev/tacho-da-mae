@@ -1,200 +1,73 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo, limparTexto, validarReceita, lerArmazenamento, guardarArmazenamento, converterTextoParaLista, converterTextoDespensa, separarPorVirgulas, reduzirImagem, apagarArmazenamento, identificarIngredientesEmFalta, verificarTemIngredientesBase } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
+import { criarGestorReceitas } from './receitas.js';
+import { filtrarEOrdenarReceitas } from './filtros.js';
+import { criarCartao } from './cartoes.js';
+import { abrirPreparacao, pedirConfirmacaoRemover, iniciarModais } from './modais.js';
+import { iniciarFormulario } from './formulario.js';
+import { iniciarCopiaSeguranca } from './copiaSeguranca.js';
+import { formatarTempo, limparTexto, lerArmazenamento, guardarArmazenamento, converterTextoDespensa } from './utilitarias.js';
 
-const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
-const CHAVE_REMOVIDAS = "tacho-removidas";
 const CHAVE_DESPENSA = "tacho-despensa";
-const CHAVE_RASCUNHO = "tacho-rascunho";
-const PREFIXO_RECEITA_PROPRIA = "minha-";
-const TODAS_CATEGORIAS = "Todas";
-const IMAGEM_PADRAO = "img/sem-imagem.svg";
-const DURACAO_MENSAGEM_MS = 5000;
+
 const listaReceitas = document.querySelector("#lista-receitas");
-let receitas = [];
 const filtroPesquisa = document.querySelector("#pesquisa");
 const filtroCategoria = document.querySelector("#categoria");
 const filtroOrdem = document.querySelector("#ordem");
-const elementoResumo = document.querySelector("#resumo-filtro");
-const favoritos = criarFavoritos();
 const filtroFavorito = document.querySelector("#so-favoritas");
 const filtroDespensa = document.querySelector("#despensa");
 const filtroReceitasPossiveis = document.querySelector("#so-ingredientes-despensa");
-const formAdicionarReceita = document.querySelector("#form-adicionar-receita");
-const caixaErros = document.querySelector("#erros");
-const mensagemSucesso = document.querySelector("#mensagem-sucesso");
-let temporizadorSucesso;
-let minhasReceitas = lerArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, []);
-filtroDespensa.value = lerArmazenamento(localStorage, CHAVE_DESPENSA, "");
-let removidas = lerArmazenamento(localStorage, CHAVE_REMOVIDAS, []);
+const elementoResumo = document.querySelector("#resumo-filtro");
 const botaoReporRemovidas = document.querySelector("#repor-removidas");
-const modalPreparacao = document.querySelector("#modal-preparacao");
-const modalTitulo = document.querySelector("#modal-titulo");
-const modalPassos = document.querySelector("#modal-passos");
-const botaoModalFechar = document.querySelector("#modal-fechar");
-const modalImagem = document.querySelector("#modal-imagem");
-const modalConfirmar = document.querySelector("#modal-confirmar");
-const confirmarTexto = document.querySelector("#confirmar-texto");
-const botaoConfirmarCancelar = document.querySelector("#confirmar-cancelar");
-const botaoConfirmarSim = document.querySelector("#confirmar-sim");
-let receitaPorRemover = null;
-const botaoExportarReceitas = document.querySelector("#exportar-receitas");
-const inputImportarReceita = document.querySelector("#importar-receitas");
-const mensagemCopia = document.querySelector("#mensagem-copia");
+
+const favoritos = criarFavoritos();
+const gestorReceitas = criarGestorReceitas();
 
 async function iniciarListaReceitas(){
-    listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`
+    listaReceitas.innerHTML = `<p class="mensagem">A carregar receitas...</p>`;
 
     try {
-        receitas = await carregarReceitas()
-        mostrarReceitas()
-    } catch (erro) {
-        listaReceitas.innerHTML = `<p class="mensagem mensagem-erro">Erro. ${erro.message}. Tente novamente mais tarde.</p>`
-    }
-}
-
-function criarCartao(receita){
-    const cartao = document.createElement("article");
-    cartao.className = "cartao";
-    cartao.innerHTML = `
-        <div class="cartao-foto">
-            <img src="${receita.imagem}">
-            <button class="favorito" type="button"></button>
-        </div>
-        <div class="cartao-corpo">
-            <p class="cartao-categoria"></p>
-            <h3 class="cartao-nome"></h3>
-            <p class="cartao-tempo"></p>
-            <p class="cartao-despensa" hidden></p>
-            <h4>Ingredientes</h4>
-            <ul class="cartao-ingredientes"></ul>
-            <button class="ver-preparacao" type="button">Ver preparação (${receita.preparacao.length} passos)</button>
-            <button class="remover" type="button">Remover receita</button>
-        </div>`
-    const categoriaReceita = cartao.querySelector(".cartao-categoria");
-    const nomeReceita = cartao.querySelector(".cartao-nome");
-    const tempoReceita = cartao.querySelector(".cartao-tempo");
-    const imagemReceita = cartao.querySelector("img");
-    const botaoFavorito = cartao.querySelector(".favorito");
-    const etiquetaDespensa = cartao.querySelector(".cartao-despensa");
-
-    categoriaReceita.textContent = receita.categoria;
-    nomeReceita.textContent = receita.nome;
-    tempoReceita.textContent = `⏱ ${formatarTempo(receita.tempo)}`
-    imagemReceita.alt = receita.nome;
-
-    prepararBotaoFavorito(botaoFavorito, receita);
-    preencherEtiquetaDespensa(etiquetaDespensa, receita);
-
-    const botaoRemoverReceita = cartao.querySelector(".remover");
-
-    botaoRemoverReceita.addEventListener("click", () => {
-        pedirConfirmacaoRemover(receita);
-    })
-
-    const listaIngredientes = cartao.querySelector(".cartao-ingredientes");
-
-    preencherLista(listaIngredientes, receita.ingredientes);
-
-    const botaoPreparacao = cartao.querySelector(".ver-preparacao");
-
-    botaoPreparacao.addEventListener("click", () =>{
-        abrirPreparacao(receita);
-    })
-
-    return cartao;
-}
-
-function abrirPreparacao(receita){
-    modalImagem.src = receita.imagem;
-    modalImagem.alt = receita.nome;
-    modalTitulo.textContent = receita.nome;
-    modalPassos.textContent = "";
-    preencherLista(modalPassos, receita.preparacao);
-    modalPreparacao.showModal();
-}
-
-function prepararBotaoFavorito(botao, receita){
-    const eFavorito = favoritos.verificarSeEFavorito(receita.id);
-
-    botao.textContent = eFavorito ? "♥" : "♡";
-    botao.setAttribute("aria-label", eFavorito ? "Tirar dos favoritos" : "Adicionar aos favoritos");
-
-    botao.addEventListener("click", () => {
-        favoritos.adicionarOuRemover(receita.id);
+        gestorReceitas.definirReceitasBase(await carregarReceitas());
         mostrarReceitas();
-    });
+    } catch (erro) {
+        listaReceitas.innerHTML = `<p class="mensagem mensagem-erro">Erro. ${erro.message}. Tente novamente mais tarde.</p>`;
+    }
 }
 
-function preencherEtiquetaDespensa(etiqueta, receita){
-    const ingredientesDespensa = converterTextoDespensa(filtroDespensa.value);
-
-    if (ingredientesDespensa.length === 0 || !verificarTemIngredientesBase(receita)){
-        return;
-    }
-
-    const emFalta = identificarIngredientesEmFalta(receita, ingredientesDespensa);
-
-    if (emFalta.length === 0){
-        etiqueta.textContent = "✓ Tem tudo o que precisa";
-        etiqueta.classList.add("cartao-despensa-ok");
-    } else {
-        etiqueta.textContent = `Falta: ${emFalta.join(", ")}`;
-        etiqueta.classList.add("cartao-despensa-falta");
-    }
-
-    etiqueta.hidden = false;
-}
-
-function preencherLista(elementoLista, itens){
-    itens.forEach(item => {
-        const itemLi = document.createElement("li");
-        itemLi.textContent = item;
-        elementoLista.appendChild(itemLi);
-    });
-}
-
-function pedirConfirmacaoRemover(receita){
-    receitaPorRemover = receita;
-    confirmarTexto.textContent = `A receita "${receita.nome}" vai ser removida da aplicação.`;
-    modalConfirmar.showModal();
-}
-
-function removerReceita(receitaRemover){
-    if (!receitaRemover){
-        return;
-    }
-
-    if (receitaRemover.id.startsWith(PREFIXO_RECEITA_PROPRIA)){
-        minhasReceitas = minhasReceitas.filter(receita => receita.id !== receitaRemover.id);
-        guardarArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, minhasReceitas);
-    } else{
-        removidas = [...removidas, receitaRemover.id];
-        guardarArmazenamento(localStorage, CHAVE_REMOVIDAS, removidas);
-    }
-
-    if (favoritos.verificarSeEFavorito(receitaRemover.id)){
-        favoritos.adicionarOuRemover(receitaRemover.id);
-    }
-
-    mostrarReceitas();
+function lerCriteriosFiltro(){
+    return {
+        pesquisa: limparTexto(filtroPesquisa.value),
+        categoria: filtroCategoria.value,
+        ordem: filtroOrdem.value,
+        apenasFavoritas: filtroFavorito.checked,
+        apenasPossiveis: filtroReceitasPossiveis.checked,
+        ingredientesDespensa: converterTextoDespensa(filtroDespensa.value),
+        verificarSeEFavorito: favoritos.verificarSeEFavorito
+    };
 }
 
 function mostrarReceitas(){
-    const receitasVisiveis = obterReceitasVisiveis();
+    const criterios = lerCriteriosFiltro();
+    const receitasVisiveis = filtrarEOrdenarReceitas(gestorReceitas.obterReceitasDisponiveis(), criterios);
     listaReceitas.innerHTML = "";
 
     if (receitasVisiveis.length === 0){
-        listaReceitas.innerHTML = `<p class="mensagem">Nenhuma receita encontrada</p>`
-    } else{
+        listaReceitas.innerHTML = `<p class="mensagem">Nenhuma receita encontrada</p>`;
+    } else {
         for (const receita of receitasVisiveis){
-            listaReceitas.appendChild(criarCartao(receita));
+            listaReceitas.appendChild(criarCartao(receita, {
+                eFavorito: favoritos.verificarSeEFavorito(receita.id),
+                ingredientesDespensa: criterios.ingredientesDespensa,
+                aoClicarFavorito: () => alternarFavorito(receita),
+                aoClicarRemover: () => pedirConfirmacaoRemover(receita),
+                aoClicarPreparacao: () => abrirPreparacao(receita)
+            }));
         }
     }
+
     mostrarResumoFiltro(receitasVisiveis);
-    botaoReporRemovidas.hidden = removidas.length === 0;
-    botaoReporRemovidas.textContent = `Repor receitas removidas (${removidas.length})`
+    mostrarBotaoReporRemovidas();
 }
 
 function mostrarResumoFiltro(receitasVisiveis){
@@ -208,267 +81,64 @@ function mostrarResumoFiltro(receitasVisiveis){
     const somaTempo = receitasVisiveis.reduce((soma, receita) => soma + receita.tempo, 0);
     const mediaTempo = formatarTempo(Math.round(somaTempo / quantidade));
     const palavraReceita = quantidade === 1 ? "receita" : "receitas";
-    const palavraFavorito = favoritos.contarFavoritos() === 1 ? "favorita" : "favoritas"
+    const quantidadeFavoritos = favoritos.contarFavoritos();
+    const palavraFavorito = quantidadeFavoritos === 1 ? "favorita" : "favoritas";
 
-    elementoResumo.textContent = `${quantidade} ${palavraReceita} · tempo médio ${mediaTempo} · ${favoritos.contarFavoritos()} ${palavraFavorito}`;
+    elementoResumo.textContent = `${quantidade} ${palavraReceita} · tempo médio ${mediaTempo} · ${quantidadeFavoritos} ${palavraFavorito}`;
 }
 
-function obterReceitasVisiveis(){
-    const valorPesquisa = limparTexto(filtroPesquisa.value);
-    const valorCategoria = filtroCategoria.value;
-    const valorOrdem = filtroOrdem.value;
-    const apenasReceitasFavoritas = filtroFavorito.checked;
-    const ingredientesDespensa = converterTextoDespensa(filtroDespensa.value);
-    const apenasReceitasPossiveis = filtroReceitasPossiveis.checked;
-    const receitasCombinadas = [...receitas, ...minhasReceitas];
-
-    const receitasFiltradas = receitasCombinadas.filter(receita => {
-        if (removidas.includes(receita.id)){
-            return false;
-        }
-        if (!limparTexto(receita.nome).includes(valorPesquisa)){
-            return false;
-        }
-        if (valorCategoria !== TODAS_CATEGORIAS && receita.categoria !== valorCategoria){
-            return false;
-        }
-        if (apenasReceitasFavoritas && !favoritos.verificarSeEFavorito(receita.id)){
-            return false;
-        }
-        if (apenasReceitasPossiveis){
-            if (!verificarTemIngredientesBase(receita)){
-                return false;
-            }
-            if (identificarIngredientesEmFalta(receita, ingredientesDespensa).length > 0){
-                return false;
-            }
-        }
-
-        return true;
-    })
-
-    const receitasFiltradasOrdenadas = [...receitasFiltradas];
-
-    switch (valorOrdem){
-        case "rapidas":
-            receitasFiltradasOrdenadas.sort((receitaA, receitaB) => receitaA.tempo - receitaB.tempo)
-            break;
-        case "demoradas":
-            receitasFiltradasOrdenadas.sort((receitaA, receitaB) => receitaB.tempo - receitaA.tempo)
-            break;
-        default:
-            receitasFiltradasOrdenadas.sort((receitaA, receitaB) => receitaA.nome.localeCompare(receitaB.nome));
-            break;
-    }
-    return receitasFiltradasOrdenadas;
+function mostrarBotaoReporRemovidas(){
+    const quantidadeRemovidas = gestorReceitas.contarRemovidas();
+    botaoReporRemovidas.hidden = quantidadeRemovidas === 0;
+    botaoReporRemovidas.textContent = `Repor receitas removidas (${quantidadeRemovidas})`;
 }
 
-function guardarRascunho(){
-    const rascunhoGuardado = {
-        nome: formAdicionarReceita.nome.value, 
-        categoria: formAdicionarReceita.categoria.value, 
-        tempo: formAdicionarReceita.tempo.value, 
-        ingredientes: formAdicionarReceita.ingredientes.value,
-        ingredientesBase: formAdicionarReceita.ingredientesBase.value,
-        preparacao: formAdicionarReceita.preparacao.value
-    };
-
-    guardarArmazenamento(sessionStorage, CHAVE_RASCUNHO, rascunhoGuardado);
-}
-
-function reporRascunho(){
-    const rascunho = lerArmazenamento(sessionStorage, CHAVE_RASCUNHO, null);
-
-    if (rascunho === null){
-        return;
-    }
-
-    formAdicionarReceita.nome.value = rascunho.nome;
-    formAdicionarReceita.categoria.value = rascunho.categoria;
-    formAdicionarReceita.tempo.value = rascunho.tempo;
-    formAdicionarReceita.ingredientes.value = rascunho.ingredientes;
-    formAdicionarReceita.ingredientesBase.value = rascunho.ingredientesBase ?? "";
-    formAdicionarReceita.preparacao.value = rascunho.preparacao;
-}
-
-function mostrarMensagemCopia(texto){
-    mensagemCopia.textContent = texto;
-    mensagemCopia.hidden = false;
-}
-
-function mostrarErros(listaMensagens){
-    caixaErros.innerHTML = listaMensagens.map(mensagem => `<li>${mensagem}</li>`).join("");
-    caixaErros.hidden = false;
-    mensagemSucesso.hidden = true;
-    clearTimeout(temporizadorSucesso);
-}
-
-function fecharAoClicarFora(dialog){
-    dialog.addEventListener("click", (evento) => {
-        if (evento.target === dialog){
-            dialog.close();
-        }
-    });
-}
-
-function lerReceitaDoFormulario(){
-    return {
-        id: `${PREFIXO_RECEITA_PROPRIA}${Date.now()}`,
-        nome: formAdicionarReceita.nome.value.trim(),
-        categoria: formAdicionarReceita.categoria.value,
-        imagem: IMAGEM_PADRAO,
-        tempo: Number(formAdicionarReceita.tempo.value),
-        ingredientes: converterTextoParaLista(formAdicionarReceita.ingredientes.value),
-        ingredientesBase: separarPorVirgulas(formAdicionarReceita.ingredientesBase.value),
-        preparacao: converterTextoParaLista(formAdicionarReceita.preparacao.value)
-    };
-}
-
-function guardarReceitaNova(receita){
-    caixaErros.hidden = true;
-    minhasReceitas = [...minhasReceitas, receita];
-    guardarArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, minhasReceitas);
-    formAdicionarReceita.reset();
-    apagarArmazenamento(sessionStorage, CHAVE_RASCUNHO);
+function alternarFavorito(receita){
+    favoritos.adicionarOuRemover(receita.id);
     mostrarReceitas();
 }
 
-function mostrarSucesso(texto){
-    mensagemSucesso.textContent = texto;
-    mensagemSucesso.hidden = false;
-
-    clearTimeout(temporizadorSucesso);
-    temporizadorSucesso = setTimeout(() => {
-        mensagemSucesso.hidden = true;
-    }, DURACAO_MENSAGEM_MS);
+function adicionarReceitas(receitasNovas){
+    gestorReceitas.adicionarReceitas(receitasNovas);
+    mostrarReceitas();
 }
 
-function exportarReceitas(){
-    if (minhasReceitas.length === 0){
-        mostrarMensagemCopia("Ainda não criou nenhuma receita para exportar");
+function removerReceita(receita){
+    if (!receita){
         return;
     }
 
-    const receitasExportar = JSON.stringify(minhasReceitas, null, 2);
-    const ficheiro = new Blob([receitasExportar], {type: "application/json"});
-    const endereco = URL.createObjectURL(ficheiro);
+    gestorReceitas.removerReceita(receita);
 
-    const linkDownload = document.createElement("a");
-    linkDownload.href = endereco;
-    linkDownload.download = "tacho-da-mae.json";
-
-    linkDownload.click();
-    URL.revokeObjectURL(endereco);
-    const mensagemExportacao = minhasReceitas.length !== 1 ? `Foram exportadas ${minhasReceitas.length} receitas.` : `Foi exportada ${minhasReceitas.length} receita.`;
-    mostrarMensagemCopia(mensagemExportacao);
-}
-
-async function importarReceitas(){
-    const ficheiroImportado = inputImportarReceita.files[0];
-
-    if (!ficheiroImportado){
-        return;
+    if (favoritos.verificarSeEFavorito(receita.id)){
+        favoritos.adicionarOuRemover(receita.id);
     }
 
-    try {
-        const ficheiroTexto = await ficheiroImportado.text();
-        const receitasImportadas = JSON.parse(ficheiroTexto);
-
-        if (!Array.isArray(receitasImportadas)){
-            throw new Error("O ficheiro não tem uma lista de receitas.");
-        }
-        const receitasValidas = receitasImportadas.filter(receitaImportada => {
-            return receitaImportada.id &&
-            receitaImportada.id.startsWith(PREFIXO_RECEITA_PROPRIA) && 
-            validarReceita(receitaImportada).length === 0 && 
-            !minhasReceitas.some(receita => receita.id === receitaImportada.id)});
-        
-        minhasReceitas = [...minhasReceitas, ...receitasValidas];
-        guardarArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, minhasReceitas);
-        mostrarReceitas();
-
-        const quantidadeImportadas = receitasValidas.length;
-        const quantidadeIgnoradas = receitasImportadas.length - receitasValidas.length;
-        const palavraImportadas = quantidadeImportadas === 1 ? "receita importada" : "receitas importadas";
-        const fraseIgnoradas = quantidadeIgnoradas === 1 ? "foi ignorada (repetida ou inválida)" : "foram ignoradas (repetidas ou inválidas)";
-        const mensagemImportacao = `${quantidadeImportadas} ${palavraImportadas}.${quantidadeIgnoradas > 0 ? ` ${quantidadeIgnoradas} ${fraseIgnoradas}.` : ""}`;
-
-        mostrarMensagemCopia(mensagemImportacao);
-    
-    } catch (erro) {
-        mostrarMensagemCopia("Não foi possível importar. Confirme que o ficheiro é uma exportação do Tacho da Mãe");
-    }
-
-    inputImportarReceita.value = "";
+    mostrarReceitas();
 }
 
-filtroFavorito.addEventListener("change", mostrarReceitas);
+function reporRemovidas(){
+    gestorReceitas.reporRemovidas();
+    mostrarReceitas();
+}
+
 filtroPesquisa.addEventListener("input", mostrarReceitas);
 filtroCategoria.addEventListener("change", mostrarReceitas);
 filtroOrdem.addEventListener("change", mostrarReceitas);
-formAdicionarReceita.addEventListener("input", guardarRascunho);
-
-formAdicionarReceita.addEventListener("submit", async (evento) => {
-    evento.preventDefault();
-
-    const receitaNova = lerReceitaDoFormulario();
-    const erros = validarReceita(receitaNova);
-
-    if (erros.length > 0){
-        mostrarErros(erros);
-        return;
-    }
-
-    const ficheiro = formAdicionarReceita.imagem.files[0];
-
-    if (ficheiro){
-        try {
-            receitaNova.imagem = await reduzirImagem(ficheiro);
-        } catch (erro) {
-            mostrarErros([erro.message]);
-            return;
-        }
-    }
-
-    guardarReceitaNova(receitaNova);
-    mostrarSucesso(`A receita "${receitaNova.nome}" foi adicionada com sucesso.`);
-});
-
-botaoReporRemovidas.addEventListener("click", () => {
-    removidas = [];
-    guardarArmazenamento(localStorage, CHAVE_REMOVIDAS, removidas);
-    mostrarReceitas();
-})
-
-botaoModalFechar.addEventListener("click", () => {
-    modalPreparacao.close()
-})
-
-fecharAoClicarFora(modalPreparacao);
-
-botaoConfirmarCancelar.addEventListener("click", () => {
-    modalConfirmar.close();
-})
-
-botaoConfirmarSim.addEventListener("click", () => {
-    removerReceita(receitaPorRemover);
-    receitaPorRemover = null;
-    modalConfirmar.close();
-})
-
-fecharAoClicarFora(modalConfirmar);
+filtroFavorito.addEventListener("change", mostrarReceitas);
+filtroReceitasPossiveis.addEventListener("change", mostrarReceitas);
 
 filtroDespensa.addEventListener("input", () => {
     guardarArmazenamento(localStorage, CHAVE_DESPENSA, filtroDespensa.value);
     mostrarReceitas();
-})
+});
 
-filtroReceitasPossiveis.addEventListener("change", mostrarReceitas);
+botaoReporRemovidas.addEventListener("click", reporRemovidas);
 
-botaoExportarReceitas.addEventListener("click", exportarReceitas);
-
-inputImportarReceita.addEventListener("change", importarReceitas);
+filtroDespensa.value = lerArmazenamento(localStorage, CHAVE_DESPENSA, "");
 
 iniciarTema();
+iniciarModais(removerReceita);
+iniciarFormulario(receita => adicionarReceitas([receita]));
+iniciarCopiaSeguranca(gestorReceitas.obterMinhasReceitas, adicionarReceitas);
 iniciarListaReceitas();
-reporRascunho();
