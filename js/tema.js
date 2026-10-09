@@ -1,8 +1,12 @@
+import { lerArmazenamento, guardarArmazenamento } from "./utilitarias.js";
+
+const CHAVE_TEMA = "tacho-tema";
+
 export function iniciarTema() {
     const botaoTema = document.querySelector('#tema');
     const html = document.documentElement;
 
-    function temaAtual() {
+    function obterTemaAtual() {
         if (html.dataset.theme) {
             return html.dataset.theme;
         }
@@ -14,12 +18,12 @@ export function iniciarTema() {
         botaoTema.textContent = tema === 'dark' ? '☀ Modo claro' : '☾ Modo escuro';
     }
 
-    const guardado = localStorage.getItem('tacho-tema');
-    aplicarTema(guardado || temaAtual());
+    const guardado = lerArmazenamento(localStorage, CHAVE_TEMA, null);
+    aplicarTema(guardado || obterTemaAtual());
 
     botaoTema.addEventListener('click', () => {
-        const novoTema = temaAtual() === 'dark' ? 'light' : 'dark';
+        const novoTema = obterTemaAtual() === 'dark' ? 'light' : 'dark';
         aplicarTema(novoTema);
-        localStorage.setItem('tacho-tema', novoTema);
+        guardarArmazenamento(localStorage, CHAVE_TEMA, novoTema);
     });
 }

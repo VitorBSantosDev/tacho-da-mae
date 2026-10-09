@@ -1,9 +1,9 @@
-import { lerLocalStorage, guardarLocalStorage } from "./utilitarias.js"
+import { lerArmazenamento, guardarArmazenamento } from "./utilitarias.js"
 
 const CHAVE_FAVORITOS = "tacho-favoritos";
 
 export function criarFavoritos(){
-    let listaFavoritos = lerLocalStorage(CHAVE_FAVORITOS, []);
+    let listaFavoritos = lerArmazenamento(localStorage, CHAVE_FAVORITOS, []);
 
     function adicionarOuRemover(id){
         if (listaFavoritos.includes(id)){
@@ -12,10 +12,10 @@ export function criarFavoritos(){
             listaFavoritos = [...listaFavoritos, id];
         }
 
-        guardarLocalStorage(CHAVE_FAVORITOS, listaFavoritos);
+        guardarArmazenamento(localStorage, CHAVE_FAVORITOS, listaFavoritos);
     }
 
-    function verificarSeEhFavorito(id){
+    function verificarSeEFavorito(id){
         return listaFavoritos.includes(id);
     }
 
@@ -23,5 +23,5 @@ export function criarFavoritos(){
         return listaFavoritos.length;
     }
 
-    return {adicionarOuRemover, verificarSeEhFavorito, contarFavoritos}
+    return {adicionarOuRemover, verificarSeEFavorito: verificarSeEFavorito, contarFavoritos}
 }

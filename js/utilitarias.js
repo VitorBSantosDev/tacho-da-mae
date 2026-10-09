@@ -16,9 +16,11 @@ const REGRAS_PLURAL = [
     { plural: "ns",  singular: "m" },
     { plural: "s",   singular: "" }
 ];
+const MIN_LETRAS_NOME = 3;
+const QUALIDADE_JPEG = 0.7;
+const MINUTOS_HORA = 60;
 
 export function formatarTempo(minutos){
-    const MINUTOS_HORA = 60;
     const horas = Math.floor(minutos / MINUTOS_HORA);
     const minutosRestantes = minutos % MINUTOS_HORA;
 
@@ -35,71 +37,41 @@ export function limparTexto(texto){
     return texto.toLowerCase().trim();
 }
 
-export function guardarLocalStorage(chave, valor){
+export function guardarArmazenamento(armazenamento, chave, valor){
     try {
         const valorString = JSON.stringify(valor);
-        localStorage.setItem(chave, valorString);       
+        armazenamento.setItem(chave, valorString);
     } catch (erro) {
-        console.warn(`Erro: ${erro.message} | ${chave}.`)
+        console.warn(`Erro: ${erro.message} | ${chave}.`);
     }
 }
 
-export function lerLocalStorage(chave, valorDefeito){
+export function lerArmazenamento(armazenamento, chave, valorDefeito){
     try {
-        const valorGuardado = localStorage.getItem(chave);
+        const valorGuardado = armazenamento.getItem(chave);
 
         if (valorGuardado === null) {
-            return  valorDefeito;
+            return valorDefeito;
         }
 
-        const valorTratado = JSON.parse(valorGuardado);
-
-        return valorTratado;
-        
+        return JSON.parse(valorGuardado);
     } catch (erro) {
         return valorDefeito;
     }
 }
 
-export function guardarSessionStorage(chave, valor) {
+export function apagarArmazenamento(armazenamento, chave){
     try {
-        const valorString = JSON.stringify(valor);
-        sessionStorage.setItem(chave, valorString);       
+        armazenamento.removeItem(chave);
     } catch (erro) {
-        console.warn(`Erro: ${erro.message} | ${chave}.`)
+        console.warn(`Erro: ${erro.message} | ${chave}.`);
     }
 }
-
-export function lerSessionStorage (chave, valorDefeito) {
-    try {
-        const valorGuardado = sessionStorage.getItem(chave);
-
-        if (valorGuardado === null) {
-            return  valorDefeito;
-        }
-
-        const valorTratado = JSON.parse(valorGuardado);
-
-        return valorTratado;
-        
-    } catch (erro) {
-        return valorDefeito;
-    }
-}
-
-export function apagarSessionStorage (chave) {
-    try {
-        sessionStorage.removeItem(chave);
-    } catch (erro) {
-        console.warn(`Erro: ${erro.message} | ${chave}.`)
-    }
-}
-
 export function validarReceita(receita){
     const listaErros = [];
 
-    if (receita.nome.length < 3){
-        listaErros.push("O nome precisa de pelo menos 3 letras.");
+    if (receita.nome.length < MIN_LETRAS_NOME){
+        listaErros.push(`O nome precisa de pelo menos ${MIN_LETRAS_NOME} letras.`);
     }
     if (isNaN(receita.tempo) || receita.tempo <= 0){
         listaErros.push("O tempo tem de ser um número maior que 0.");
@@ -114,16 +86,28 @@ export function validarReceita(receita){
     return listaErros;
 }
 
-export function converterTextoParaLista(texto){
-    return texto.split("\n").map(linha => linha.trim()).filter(linha => linha !== "");
+export function preencherLista(elementoLista, itens){
+    itens.forEach(item => {
+        const itemLi = document.createElement("li");
+        itemLi.textContent = item;
+        elementoLista.appendChild(itemLi);
+    });
 }
 
-export function converterTextoDespensa(texto){
-    return texto.split(",").map(ingrediente => normalizarIngrediente(ingrediente)).filter(ingrediente => ingrediente !== "");
+export function separarTexto(texto, separador){
+    return texto.split(separador).map(parte => parte.trim()).filter(parte => parte !== "");
+}
+
+export function converterTextoParaLista(texto){
+    return separarTexto(texto, "\n");
 }
 
 export function separarPorVirgulas(texto){
-    return texto.split(",").map(ingrediente => ingrediente.trim()).filter(ingrediente => ingrediente !== "");
+    return separarTexto(texto, ",");
+}
+
+export function converterTextoDespensa(texto){
+    return separarPorVirgulas(texto).map(ingrediente => normalizarIngrediente(ingrediente));
 }
 
 export function reduzirImagem(ficheiro, largura = 400, altura = 300){
@@ -143,7 +127,7 @@ export function reduzirImagem(ficheiro, largura = 400, altura = 300){
             const contexto = tela.getContext("2d");
             contexto.drawImage(imagem, x, y, novaLargura, novaAltura);
 
-            return tela.toDataURL("image/jpeg", 0.7);
+            return tela.toDataURL("image/jpeg", QUALIDADE_JPEG);
         })
         .catch(() => {
             throw new Error("O ficheiro escolhido não é uma imagem válida.");
@@ -168,6 +152,10 @@ export function normalizarIngrediente(texto) {
     }
 
     return ingredienteSemAcentos;
+}
+
+export function verificarTemIngredientesBase(receita){
+    return Boolean(receita.ingredientesBase) && receita.ingredientesBase.length > 0;
 }
 
 export function identificarIngredientesEmFalta(receita, despensa){
