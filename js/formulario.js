@@ -1,5 +1,5 @@
 import { validarReceita, converterTextoParaLista, separarPorVirgulas, reduzirImagem, lerArmazenamento, guardarArmazenamento, apagarArmazenamento } from "./utilitarias.js";
-import { PREFIXO_RECEITA_PROPRIA } from "./constantes.js";
+import { criarIdReceitaPropria } from "./receitas.js";
 
 const CHAVE_RASCUNHO = "tacho-rascunho";
 const IMAGEM_PADRAO = "img/sem-imagem.svg";
@@ -46,7 +46,7 @@ export function iniciarFormulario(aoAdicionarReceita){
 
 function lerReceitaDoFormulario(){
     return {
-        id: `${PREFIXO_RECEITA_PROPRIA}${Date.now()}`,
+        id: criarIdReceitaPropria(),
         nome: formAdicionarReceita.nome.value.trim(),
         categoria: formAdicionarReceita.categoria.value,
         imagem: IMAGEM_PADRAO,
