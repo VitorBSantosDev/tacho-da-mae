@@ -86,6 +86,14 @@ export function validarReceita(receita){
     return listaErros;
 }
 
+export function preencherLista(elementoLista, itens){
+    itens.forEach(item => {
+        const itemLi = document.createElement("li");
+        itemLi.textContent = item;
+        elementoLista.appendChild(itemLi);
+    });
+}
+
 export function separarTexto(texto, separador){
     return texto.split(separador).map(parte => parte.trim()).filter(parte => parte !== "");
 }
