@@ -37,66 +37,36 @@ export function limparTexto(texto){
     return texto.toLowerCase().trim();
 }
 
-export function guardarLocalStorage(chave, valor){
+export function guardarArmazenamento(armazenamento, chave, valor){
     try {
         const valorString = JSON.stringify(valor);
-        localStorage.setItem(chave, valorString);       
+        armazenamento.setItem(chave, valorString);
     } catch (erro) {
-        console.warn(`Erro: ${erro.message} | ${chave}.`)
+        console.warn(`Erro: ${erro.message} | ${chave}.`);
     }
 }
 
-export function lerLocalStorage(chave, valorDefeito){
+export function lerArmazenamento(armazenamento, chave, valorDefeito){
     try {
-        const valorGuardado = localStorage.getItem(chave);
+        const valorGuardado = armazenamento.getItem(chave);
 
         if (valorGuardado === null) {
-            return  valorDefeito;
+            return valorDefeito;
         }
 
-        const valorTratado = JSON.parse(valorGuardado);
-
-        return valorTratado;
-        
+        return JSON.parse(valorGuardado);
     } catch (erro) {
         return valorDefeito;
     }
 }
 
-export function guardarSessionStorage(chave, valor) {
+export function apagarArmazenamento(armazenamento, chave){
     try {
-        const valorString = JSON.stringify(valor);
-        sessionStorage.setItem(chave, valorString);       
+        armazenamento.removeItem(chave);
     } catch (erro) {
-        console.warn(`Erro: ${erro.message} | ${chave}.`)
+        console.warn(`Erro: ${erro.message} | ${chave}.`);
     }
 }
-
-export function lerSessionStorage (chave, valorDefeito) {
-    try {
-        const valorGuardado = sessionStorage.getItem(chave);
-
-        if (valorGuardado === null) {
-            return  valorDefeito;
-        }
-
-        const valorTratado = JSON.parse(valorGuardado);
-
-        return valorTratado;
-        
-    } catch (erro) {
-        return valorDefeito;
-    }
-}
-
-export function apagarSessionStorage (chave) {
-    try {
-        sessionStorage.removeItem(chave);
-    } catch (erro) {
-        console.warn(`Erro: ${erro.message} | ${chave}.`)
-    }
-}
-
 export function validarReceita(receita){
     const listaErros = [];
 
