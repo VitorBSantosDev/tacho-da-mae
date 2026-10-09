@@ -158,6 +158,152 @@ header p {
 .campo-pesquisa {
     flex: 1 1 260px; }
 
+.espaco-filtros {
+    min-height: var(--altura-filtros, auto);
+}
+
+.filtros-cabecalho,
+.botao-ver-receitas {
+    display: none;
+}
+
+.filtros-rodape {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.botao-funil {
+    position: fixed;
+    z-index: 15;
+    top: 12px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    background: var(--cartao);
+    color: var(--azul);
+    font-weight: 700;
+    box-shadow: var(--sombra);
+    cursor: pointer;
+    transition: opacity 0.2s, translate 0.2s;
+}
+
+.botao-funil svg {
+    width: 20px;
+    height: 20px;
+}
+
+.botao-funil[data-visivel="false"] {
+    opacity: 0;
+    translate: 0 -12px;
+    pointer-events: none;
+}
+
+.contador-filtros {
+    min-width: 22px;
+    height: 22px;
+    padding-inline: 6px;
+    border-radius: 999px;
+    background: var(--azul);
+    color: var(--cartao);
+    font-size: 0.8rem;
+    line-height: 22px;
+    text-align: center;
+}
+
+.contador-filtros:empty {
+    display: none;
+}
+
+.fundo-filtros {
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    background: rgb(0 0 0 / 0.4);
+}
+
+.fundo-filtros[hidden] {
+    display: none;
+}
+
+.filtros.aberto {
+    position: fixed;
+    z-index: 20;
+    top: 64px;
+    right: 16px;
+    width: min(380px, calc(100vw - 32px));
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid var(--linha);
+    border-radius: 14px;
+    background: var(--cartao);
+    box-shadow: var(--sombra);
+}
+
+.filtros.aberto .campo-pesquisa {
+    flex: none;
+}
+
+.filtros.aberto .filtros-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filtros.aberto .filtros-cabecalho h2 {
+    font-size: 1.3rem;
+    color: var(--azul);
+}
+
+.filtros.aberto .filtros-rodape {
+    margin-left: 0;
+}
+
+.filtros.aberto .botao-ver-receitas {
+    display: block;
+}
+
+.botao-fechar-filtros {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--linha);
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+}
+
+.botao-limpar-filtros {
+    padding: 10px 16px;
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    background: none;
+    cursor: pointer;
+}
+
+.botao-ver-receitas {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 999px;
+    background: var(--azul);
+    color: var(--cartao);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@keyframes subir {
+    from { translate: 0 100%; }
+}
+
 .label-ajuda {
     text-transform: none;
     letter-spacing: 0;
@@ -647,6 +793,17 @@ input[type="file"]::file-selector-button {
         border-color: var(--azul);
         color: var(--azul);
     }
+
+    .botao-funil:hover,
+    .botao-fechar-filtros:hover,
+    .botao-limpar-filtros:hover {
+        border-color: var(--azul);
+        color: var(--azul);
+    }
+
+    .botao-ver-receitas:hover {
+        filter: brightness(1.12);
+    }
 }
 
 @media (pointer: coarse) {
@@ -677,6 +834,42 @@ input[type="file"]::file-selector-button {
 @media (max-width: 600px) {
     .filtros .campo:not(.campo-pesquisa) {
         flex: 1 1 140px;
+    }
+
+    .filtros.aberto .campo:not(.campo-pesquisa) {
+        flex: none;
+    }
+
+    .botao-funil {
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .botao-funil .texto-funil {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+
+    .botao-funil .contador-filtros {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+    }
+
+    .filtros.aberto {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 85vh;
+        border-radius: 18px 18px 0 0;
+        animation: subir 0.25s ease-out;
     }
 
     .modal-corpo {

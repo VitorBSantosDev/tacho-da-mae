@@ -19,7 +19,12 @@
         <button id="tema" class="botao-tema" type="button">☾ Modo escuro</button>
     </header>
   <main>
-    <section class="filtros" aria-label="Pesquisa e filtros">
+    <div class="espaco-filtros">
+    <section class="filtros" id="filtros" aria-label="Pesquisa e filtros">
+      <div class="filtros-cabecalho">
+        <h2>Filtros</h2>
+        <button class="botao-fechar-filtros" id="fechar-filtros" type="button" aria-label="Fechar filtros">✕</button>
+      </div>
       <div class="campo campo-pesquisa">
         <label for="pesquisa">Pesquisar</label>
         <input id="pesquisa" type="search" placeholder="Ex.: bacalhau" autocomplete="off">
@@ -48,7 +53,12 @@
       </div>
       <label class="caixa"><input id="so-favoritas" type="checkbox"> Só favoritas</label>
       <label class="caixa"><input id="so-ingredientes-despensa" type="checkbox"> Só as que consigo fazer</label>
+      <div class="filtros-rodape">
+        <button class="botao-limpar-filtros" id="limpar-filtros" type="button">Limpar filtro</button>
+        <button class="botao-ver-receitas" id="ver-receitas" type="button">Ver receitas</button>
+      </div>
     </section>
+    </div>
 
     <div class="barra-resumo-filtro">
       <p class="resumo-filtro" id="resumo-filtro" aria-live="polite"></p>
@@ -128,6 +138,13 @@
     <a href="#topo">↑ Início</a>
     <a href="#adicionar-receita" class="atalho-principal">+ Nova receita</a>
   </nav>
+
+  <button class="botao-funil" id="botao-funil" type="button" aria-controls="filtros" aria-expanded="false" data-visivel="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5L3 4z"/></svg>
+    <span class="texto-funil">Filtros</span>
+    <span class="contador-filtros" id="contador-filtros"></span>
+  </button>
+  <div class="fundo-filtros" id="fundo-filtros" hidden></div>
 
   <dialog id="modal-preparacao" aria-labelledby="modal-titulo">
     <img src="" alt="" id="modal-imagem">

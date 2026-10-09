@@ -7,6 +7,7 @@ import { criarCartao } from './cartoes.js';
 import { abrirPreparacao, pedirConfirmacaoRemover, iniciarModais } from './modais.js';
 import { iniciarFormulario } from './formulario.js';
 import { iniciarCopiaSeguranca } from './copiaSeguranca.js';
+import { iniciarFunil } from './funil.js';
 import { formatarTempo, limparTexto, lerArmazenamento, guardarArmazenamento, converterTextoDespensa } from './utilitarias.js';
 
 const CHAVE_DESPENSA = "tacho-despensa";
@@ -122,6 +123,28 @@ function reporRemovidas(){
     mostrarReceitas();
 }
 
+function contarFiltrosAtivos(){
+    const criterios = lerCriteriosFiltro();
+
+    return [
+        criterios.pesquisa !== "",
+        criterios.categoria !== "Todas",
+        criterios.apenasFavoritas,
+        criterios.apenasPossiveis,
+        criterios.ingredientesDespensa.length > 0
+    ].filter(Boolean).length;
+}
+
+function limparFiltros(){
+    filtroPesquisa.value = "";
+    filtroCategoria.value = "Todas";
+    filtroFavorito.checked = false;
+    filtroReceitasPossiveis.checked = false;
+    filtroDespensa.value = "";
+    guardarArmazenamento(localStorage, CHAVE_DESPENSA, "");
+    mostrarReceitas();
+}
+
 filtroPesquisa.addEventListener("input", mostrarReceitas);
 filtroCategoria.addEventListener("change", mostrarReceitas);
 filtroOrdem.addEventListener("change", mostrarReceitas);
@@ -141,4 +164,5 @@ iniciarTema();
 iniciarModais(removerReceita);
 iniciarFormulario(receita => adicionarReceitas([receita]));
 iniciarCopiaSeguranca(gestorReceitas.obterMinhasReceitas, adicionarReceitas);
+iniciarFunil(contarFiltrosAtivos, limparFiltros);
 iniciarListaReceitas();
