@@ -1,8 +1,16 @@
 import { lerArmazenamento, guardarArmazenamento } from "./utilitarias.js";
-import { PREFIXO_RECEITA_PROPRIA } from "./constantes.js";
 
 const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
 const CHAVE_REMOVIDAS = "tacho-removidas";
+const PREFIXO_RECEITA_PROPRIA = "minha-";
+
+export function criarIdReceitaPropria(){
+    return `${PREFIXO_RECEITA_PROPRIA}${Date.now()}`;
+}
+
+export function verificarEReceitaPropria(receita){
+    return Boolean(receita.id) && receita.id.startsWith(PREFIXO_RECEITA_PROPRIA);
+}
 
 export function criarGestorReceitas(){
     let receitasBase = [];
@@ -31,7 +39,7 @@ export function criarGestorReceitas(){
     }
 
     function removerReceita(receitaRemover){
-        if (receitaRemover.id.startsWith(PREFIXO_RECEITA_PROPRIA)){
+        if (verificarEReceitaPropria(receitaRemover)){
             minhasReceitas = minhasReceitas.filter(receita => receita.id !== receitaRemover.id);
             guardarArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, minhasReceitas);
             return;
