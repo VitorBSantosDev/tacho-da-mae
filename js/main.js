@@ -1,6 +1,6 @@
 import { iniciarTema } from './tema.js';
 import { carregarReceitas } from './api.js';
-import { formatarTempo, limparTexto, validarReceita, lerLocalStorage, guardarLocalStorage, converterTextoParaLista, converterTextoDespensa, separarPorVirgulas, reduzirImagem, guardarSessionStorage, lerSessionStorage, apagarSessionStorage, identificarIngredientesEmFalta, verificarTemIngredientesBase } from './utilitarias.js';
+import { formatarTempo, limparTexto, validarReceita, lerArmazenamento, guardarArmazenamento, converterTextoParaLista, converterTextoDespensa, separarPorVirgulas, reduzirImagem, apagarArmazenamento, identificarIngredientesEmFalta, verificarTemIngredientesBase } from './utilitarias.js';
 import { criarFavoritos } from './favoritos.js';
 
 const CHAVE_MINHAS_RECEITAS = "tacho-minhas-receitas";
@@ -25,9 +25,9 @@ const formAdicionarReceita = document.querySelector("#form-adicionar-receita");
 const caixaErros = document.querySelector("#erros");
 const mensagemSucesso = document.querySelector("#mensagem-sucesso");
 let temporizadorSucesso;
-let minhasReceitas = lerLocalStorage(CHAVE_MINHAS_RECEITAS, []);
-filtroDespensa.value = lerLocalStorage(CHAVE_DESPENSA, "");
-let removidas = lerLocalStorage(CHAVE_REMOVIDAS, []);
+let minhasReceitas = lerArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, []);
+filtroDespensa.value = lerArmazenamento(localStorage, CHAVE_DESPENSA, "");
+let removidas = lerArmazenamento(localStorage, CHAVE_REMOVIDAS, []);
 const botaoReporRemovidas = document.querySelector("#repor-removidas");
 const modalPreparacao = document.querySelector("#modal-preparacao");
 const modalTitulo = document.querySelector("#modal-titulo");
@@ -168,10 +168,10 @@ function removerReceita(receitaRemover){
 
     if (receitaRemover.id.startsWith(PREFIXO_RECEITA_PROPRIA)){
         minhasReceitas = minhasReceitas.filter(receita => receita.id !== receitaRemover.id);
-        guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
+        guardarArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, minhasReceitas);
     } else{
         removidas = [...removidas, receitaRemover.id];
-        guardarLocalStorage(CHAVE_REMOVIDAS, removidas);
+        guardarArmazenamento(localStorage, CHAVE_REMOVIDAS, removidas);
     }
 
     if (favoritos.verificarSeEFavorito(receitaRemover.id)){
@@ -273,11 +273,11 @@ function guardarRascunho(){
         preparacao: formAdicionarReceita.preparacao.value
     };
 
-    guardarSessionStorage(CHAVE_RASCUNHO, rascunhoGuardado);
+    guardarArmazenamento(sessionStorage, CHAVE_RASCUNHO, rascunhoGuardado);
 }
 
 function reporRascunho(){
-    const rascunho = lerSessionStorage(CHAVE_RASCUNHO, null);
+    const rascunho = lerArmazenamento(sessionStorage, CHAVE_RASCUNHO, null);
 
     if (rascunho === null){
         return;
@@ -327,9 +327,9 @@ function lerReceitaDoFormulario(){
 function guardarReceitaNova(receita){
     caixaErros.hidden = true;
     minhasReceitas = [...minhasReceitas, receita];
-    guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
+    guardarArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, minhasReceitas);
     formAdicionarReceita.reset();
-    apagarSessionStorage(CHAVE_RASCUNHO);
+    apagarArmazenamento(sessionStorage, CHAVE_RASCUNHO);
     mostrarReceitas();
 }
 
@@ -384,7 +384,7 @@ async function importarReceitas(){
             !minhasReceitas.some(receita => receita.id === receitaImportada.id)});
         
         minhasReceitas = [...minhasReceitas, ...receitasValidas];
-        guardarLocalStorage(CHAVE_MINHAS_RECEITAS, minhasReceitas);
+        guardarArmazenamento(localStorage, CHAVE_MINHAS_RECEITAS, minhasReceitas);
         mostrarReceitas();
 
         const quantidadeImportadas = receitasValidas.length;
@@ -436,7 +436,7 @@ formAdicionarReceita.addEventListener("submit", async (evento) => {
 
 botaoReporRemovidas.addEventListener("click", () => {
     removidas = [];
-    guardarLocalStorage(CHAVE_REMOVIDAS, removidas);
+    guardarArmazenamento(localStorage, CHAVE_REMOVIDAS, removidas);
     mostrarReceitas();
 })
 
@@ -459,7 +459,7 @@ botaoConfirmarSim.addEventListener("click", () => {
 fecharAoClicarFora(modalConfirmar);
 
 filtroDespensa.addEventListener("input", () => {
-    guardarLocalStorage(CHAVE_DESPENSA, filtroDespensa.value);
+    guardarArmazenamento(localStorage, CHAVE_DESPENSA, filtroDespensa.value);
     mostrarReceitas();
 })
 
